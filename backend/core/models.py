@@ -297,6 +297,20 @@ class PipelineState(BaseModel):
     regenerations_remaining: int = 1
 
 
+# ─── VIDEO RESULT (Visual Agent output) ────────────────
+
+class VideoResult(BaseModel):
+    """Output from the Visual Agent — the rendered video."""
+    job_id: str
+    video_path: str
+    title: str = ""
+    description: str = ""
+    hashtags: list[str] = Field(default_factory=list)
+    duration_seconds: int = 0
+    word_count: int = 0
+    genre_id: str = ""
+
+
 # ─── SUBMISSION (to Google Sheet) ──────────────────────
 
 class VideoSubmission(BaseModel):
