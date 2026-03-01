@@ -1,0 +1,2 @@
+{"timestamp": "2026-03-01T15:54:56.071767+00:00", "level": "INFO", "module": "main", "message": "Backend starting", "extra": {"port": 8742, "debug": false}}
+{"timestamp": "2026-03-01T15:56:03.994914+00:00", "level": "INFO", "module": "main", "message": "Backend shutting down"}
