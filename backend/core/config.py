@@ -84,6 +84,7 @@ class AppConfig(BaseModel):
     groq_model: str = "llama-3.3-70b-versatile"
 
     # ─── TTS Defaults ──────────────────────────────
+    tts_key_path: str = "shorts-bot-tts-7b9b1ffbebd0.json"
     default_tts_voice: str = "en-US-Neural2-D"
     default_tts_rate: float = 0.95
     default_tts_pitch: float = 0.0
