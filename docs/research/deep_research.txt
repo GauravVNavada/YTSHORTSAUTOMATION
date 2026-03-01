@@ -1,0 +1,207 @@
+Architecting a Fully Autonomous YouTube Shorts Generation Pipeline: A Comprehensive Systems Analysis
+The proliferation of short-form video content has catalyzed a paradigm shift in digital media consumption, prompting the development of highly automated content generation pipelines. Constructing a fully autonomous desktop application capable of ideating, synthesizing, editing, and publishing YouTube Shorts demands a rigorous integration of Large Language Models (LLMs), programmatic audio-visual synthesis, robust workflow orchestration, and localized rendering architectures. This analysis explores the architectural, technical, and strategic dimensions of building such a system entirely on free-tier APIs, specifically targeting Windows desktop environments using Tauri and Python as of February 2026.
+1. Large Language Model Orchestration and Script Synthesis
+The foundation of an autonomous content pipeline relies on a highly deterministic script generation engine. The primary challenge lies in balancing the creative variance necessary for engaging content with the strict structural schemas required for programmatic parsing.
+1.1 The Gemini API Script Generation Engine
+As of February 2026, the Google Gemini API free tier provides access to the highly capable Gemini 2.5 Flash model. Following quota restructurings, the free tier constraints enforce a disciplined approach to request management.1
+The optimal model for high-volume script generation is Gemini 2.5 Flash, striking a balance between throughput and reasoning capability.2 Exceeding these limits yields an HTTP 429 RESOURCE_EXHAUSTED error.4 To guarantee output consistency, the application utilizes Gemini's structured output capabilities. By setting the response_mime_type to application/json and passing a strict schema to the response_schema parameter, the model is forced to adhere to a predefined JSON structure.5
+The programmatic implementation requires enforcing required fields to prevent silent truncations or schema violations, a known edge case in generative APIs.8
+
+Python
+
+
+import google.generativeai as genai
+from pydantic import BaseModel, Field
+
+class ShortScript(BaseModel):
+    hook: str = Field(description="The first 3 seconds to grab attention.")
+    body: str = Field(description="The core narrative.")
+    closing: str = Field(description="Call to action.")
+    sfx_cues: list[str] = Field(description="Array of sound effect keywords.")
+    image_cues: list[str] = Field(description="Array of visual background keywords.")
+
+generation_config = genai.GenerationConfig(
+    response_mime_type="application/json",
+    response_schema=ShortScript,
+    temperature=0.7
+)
+
+To address known failure modes such as schema violations where the model might omit a key, developers often must manually enforce the "required" fields in the underlying dictionary before passing it to the API, overcoming specific library limitations.8 Furthermore, few-shot prompting is critical for maintaining tone across hundreds of scripts. The optimal architecture injects three distinct examples of highly retentive scripts directly into the system prompt, explicitly mapping the relationship between the desired tone and the resulting image_cues. Combining idea generation and scriptwriting into a single API call chain is highly efficient; the prompt instructs the model to autonomously select a sub-niche from a provided list, generate the premise, and immediately format it into the required JSON schema, thereby conserving the 10 RPM limit.3
+Handling 429 errors requires a robust exponential backoff algorithm. Because the RPM limit is evaluated on a rolling 60-second window 3, a simple sleep function is insufficient. The system must implement a jittered exponential backoff that intercepts the API exception, pausing the thread for an exponentially increasing duration multiplied by a randomized jitter factor (e.g., sleep(base * (2 ** attempt) + random.uniform(0, 1))) to prevent thundering herd problems upon retry.
+2. Audio Synthesis and Acoustic Engineering
+Audio quality directly dictates viewer retention. The pipeline must synthesize natural-sounding narration, align it temporally with visual assets, and master the final mix to professional broadcasting standards.
+2.1 Google Cloud Text-to-Speech and SSML Prosody
+Google Cloud TTS provides access to high-fidelity Neural2 and Studio voices. The free tier accommodates 1 million characters per month for standard and WaveNet voices. A typical 60-second YouTube Short requires approximately 120 to 150 words, which translates to roughly 600 to 800 characters per script. Consequently, the free tier supports the generation of approximately 1,250 to 1,600 YouTube Shorts per month, providing ample runway for daily uploads across multiple channels. For deep, immersive content like scary stories or historical facts, en-US-Neural2-F or en-US-Neural2-D offer superior gravitas, while Journey voices excel in motivational narration.9
+To overcome robotic cadences, Speech Synthesis Markup Language (SSML) is injected into the raw script. Utilizing the <prosody> tag allows the system to programmatically slow down the speech rate during critical revelations, while the <break> tag introduces micro-pauses (<break time="300ms"/>) before the closing hook.10 Testing indicates that a default speed of 0.95x paired with a pitch shift of +1st yields the highest intelligibility in fast-paced short-form content.9
+Extracting exact word-level timestamps is paramount for kinetic typography. While the Google Cloud Speech-to-Text (STT) API natively returns enableWordTimeOffsets 13, the TTS API handles this differently. To achieve this via TTS without a secondary STT pass, developers must inject SSML <mark> tags around every word and pass the enable_time_pointing= parameter.14
+
+Python
+
+
+from google.cloud import texttospeech_v1beta1 as tts
+
+response = client.synthesize_speech(
+    request=tts.SynthesizeSpeechRequest(
+        input=tts.SynthesisInput(ssml="<speak>Hello <mark name='word_1'/> world</speak>"),
+        voice=tts.VoiceSelectionParams(language_code="en-US", name="en-US-Neural2-F"),
+        audio_config=tts.AudioConfig(audio_encoding=tts.AudioEncoding.MP3),
+        enable_time_pointing=
+    )
+)
+
+However, programmatically wrapping every word in an SSML tag can occasionally degrade natural prosody. A superior architectural alternative involves synthesizing the clean text, then passing the generated audio back through a localized, lightweight alignment model like OpenAI's whisper-timestamped.16 Because the desktop app targets mid-range hardware (8GB RAM, no GPU), the Whisper tiny or base models run sufficiently fast on the CPU, yielding an array of precise start and end times for every token.16 Open-source TTS alternatives like Coqui XTTS, Piper, and Bark exist, but Piper is the only viable option for an 8GB RAM non-GPU machine, though it lacks the nuanced prosody control that Google Cloud's Neural2 voices offer via SSML.
+2.2 Audio Post-Processing and Mastering
+Professional sound design requires dynamic mixing of the voiceover (VO), background music (BGM), and sound effects (SFX). Python libraries pydub and librosa are utilized for this phase.17
+Frequency-aware audio ducking ensures the background music does not overpower the narration. Standard ducking lowers the volume of the entire BGM track uniformly. Frequency-aware ducking isolates the human voice frequency band (typically 100Hz to 4kHz). Using librosa.stft (Short-Time Fourier Transform), the pipeline analyzes the VO to detect onset strength and harmonic content.18 The BGM is then passed through a band-pass filter using pydub.effects, attenuating only the specific frequencies clashing with the VO, resulting in a significantly clearer mix.21
+The "pre-lap" technique is programmatically applied to SFX timing. Instead of placing a "whoosh" or "impact" sound exactly at the timestamp of a visual transition or spoken keyword, the audio orchestrator shifts the SFX cue back by 150-250 milliseconds. This anticipates the visual change, mirroring professional psychological editing techniques that keep the viewer's attention continuously anchored. Crossfades between audio segments are seamlessly implemented using pydub's .append(crossfade=ms) method to prevent jarring audio cuts.17
+Finally, YouTube's algorithm penalizes audio that causes clipping or falls too quiet. The entire merged track must undergo loudness normalization to -14 LUFS (Loudness Units relative to Full Scale), YouTube's native playback standard. This is achieved by measuring the integrated loudness of the final AudioSegment and applying a gain offset, followed by a hard limiter at -1.0 dB true peak to prevent digital clipping.22
+3. Secondary LLM Validation Layer
+To mitigate hallucinations, repetitive pacing, or schema drift, a secondary validation layer is necessary. The Groq API, leveraging Language Processing Units (LPUs), offers ultra-low latency inference that adds negligible time to the pipeline overhead.
+The llama-3.1-8b-instant model is ideal for validation due to its generous 14,400 RPD limit.23 Cross-model validation operates by passing the Gemini-generated JSON string into Groq. The validation prompt is engineered to score the script on hook strength, word count, originality, and content safety. If the script fails the validation threshold, the orchestrator triggers a retry on the Gemini node. Because Groq's inference latency is often sub-second, this step guarantees higher quality outputs without bottlenecking the pipeline.
+Groq supports structured JSON output similarly to Gemini, allowing the validation engine to return a boolean pass/fail flag and a string containing the reason for failure. Viable alternatives for free validation include Cloudflare Workers AI and Hugging Face's serverless inference APIs, though Groq remains unparalleled in raw tokens-per-second output.
+4. Asset Acquisition and Caching Architecture
+Visual retention in faceless shorts relies on rapidly shifting, highly contextual background footage. The pipeline must translate the LLM-generated image_cues into accurate API search queries and fetch commercial-safe media.
+4.1 Pexels vs. Pixabay API Capabilities
+For commercial YouTube content, both Pexels and Pixabay offer media that requires no attribution, though their API infrastructures differ significantly.24
+Pexels is generally superior for fetching cinematic, aesthetic background videos due to its high curation standards and robust video search endpoints.26 Pixabay offers a wider variety of abstract illustrations and royalty-free music, allowing filtering by categories such as mood or genre.24 The prompt engineering must translate a script line like "ancient Egyptian pharaoh" into broad, conceptual search terms (e.g., "desert pyramids cinematic") to ensure high match rates when querying these APIs.
+For sound effects, the Freesound.org API is integrated. It provides a rate limit of 60 RPM and 2000 RPD.29 Because Freesound contains various Creative Commons licenses, the API query must rigidly filter for license:"Creative Commons 0" (CC0) to ensure the media can be monetized without attribution.30 Other notable APIs include Unsplash (photos only) and Coverr (excellent video, but heavily rate-limited or paid API access).
+4.2 Intelligent Caching and Local Storage
+Fetching multi-megabyte video files for every generation quickly exhausts both API rate limits and user bandwidth. The application implements an intelligent local caching system utilizing an SQLite database. When a video is downloaded from Pexels, its unique ID, search tags, and local filepath are indexed. Before initiating an API network call, the asset orchestrator queries the local database for matching tags. An LRU (Least Recently Used) cache eviction policy ensures the local storage does not exceed a user-defined threshold (e.g., 5GB), automatically deleting the oldest assets. This drastically speeds up the generation pipeline for channels producing highly repetitive niche content.
+5. Advanced Typography and Video Compositing
+Standard video editing libraries like MoviePy overlay text by rendering each frame through Python arrays, which is computationally expensive and severely limited in animation capabilities. Professional YouTube Shorts rely on kinetic typography—text that pops, bounces, and highlights word-by-word.
+5.1 The Advanced SubStation Alpha (ASS) Format
+The ASS subtitle format is vastly superior to standard SRT or direct MoviePy text rendering. ASS natively supports vector graphics, layering, color transitions, and sub-millisecond animation timings independent of the video renderer.32
+To generate these files programmatically in Python, libraries like pysubs2 and PyonFX are utilized. pysubs2 constructs the base file, while PyonFX serves as a mathematical animation engine, allowing developers to define complex transformations (scale, position, alpha) over time.34
+The most viral caption styles rely heavily on specific ASS override tags:
+Karaoke Highlight (\k, \kf, \K): Creates a fluid color sweep across a word matching the exact duration of the spoken syllable.32
+Bounce/Pop-in (\t, \fscx, \fscy): Uses the transform tag (\t) to animate the font scale X and Y from 0% to 120%, then settling at 100%, creating an elastic pop effect.32
+Color Formatting (\c, \3c): Sets the primary fill color and border colors dynamically.32
+A Python script iterates through the Whisper-generated word timestamps, generating a new ASS event line for each phrase, injecting \kf tags scaled to the exact millisecond duration of each word. Custom fonts (e.g., "The Bold Font" or "Montserrat") are embedded directly into the application bundle and referenced in the ASS `` header.
+5.2 Pipeline Architecture: MoviePy to FFmpeg
+The most performant video composition pipeline uses MoviePy strictly for structural orchestration (calculating durations, organizing layers, applying Ken Burns math) but delegates the actual rendering to a raw FFmpeg subprocess. Native MoviePy write_videofile operations on high-resolution assets suffer from CPU bottlenecks and memory leaks.38
+The Ken Burns effect (slow panning and zooming on still images) is mathematically calculated prior to rendering. To maintain aspect ratios, the bounding box coordinates are interpolated over time. The formula new_w = w * (1 + (zoom_ratio * t)) dynamically scales the width, while the height adjusts proportionally.39
+To composite multiple layers efficiently, an FFmpeg filtergraph (-filter_complex) is constructed.38
+Background Layer: The base video is cropped to 9:16 (crop=1080:1920:exact=1).
+Image Overlays: Images are scaled and positioned using the Ken Burns zoompan filter (zoompan=z='zoom+0.001':x=iw/2-(iw/zoom/2)...).38
+Subtitles: The ASS file is burned directly into the video stream using the subtitles=file.ass video filter. This requires ensuring the bundled FFmpeg binary is compiled with --enable-libass.40
+Color Grading: Programmatic color grading is achieved via FFmpeg's eq filter (adjusting contrast, brightness, saturation) to match the niche's mood.
+Optimal Encoding: The final render executes with -c:v libx264 -preset fast -crf 23 -pix_fmt yuv420p, ensuring platform compatibility while balancing export speed and file size.
+By compiling this into a single FFmpeg command, the rendering process bypasses Python's Global Interpreter Lock (GIL) and utilizes highly optimized C-level multithreading, reducing export times by up to 70% compared to native MoviePy compositing. To select smart clips from background footage, OpenCV frame differencing evaluates pixel change variance over time; segments with variance above a threshold indicate high motion, which are prioritized for extraction to keep visual pacing rapid.
+6. Agentic Workflow Management and Orchestration
+A linear, monolithic Python script executing sequentially will inevitably fail in a desktop environment subject to network timeouts, rate limit hits, and system interruptions. The system employs a Master-Child (Orchestrator-Worker) pattern implemented via the Saga architectural pattern without relying on heavyweight frameworks like LangChain or AutoGen.41
+6.1 The Saga Pattern in Python
+The Saga pattern decomposes the video generation pipeline into discrete, isolated local transactions: Script Generation, Audio Synthesis, Asset Fetching, Video Assembly, and Upload. An orchestrator class maintains a state machine. If the Asset Fetching worker fails due to an API outage, the orchestrator halts the process, serializes the current state (containing the completed script and audio paths) to a local SQLite database, and schedules a retry.41
+This ensures that the user's Gemini and TTS quotas are not wasted on a pipeline crash. Each node acts idempotently; upon resumption, the orchestrator checks the state machine and resumes exactly from the failed step.43
+6.2 Circuit Breakers and Data Boundaries
+Circuit breakers are implemented around all external API calls. If the Gemini API returns consecutive 500-level errors or outputs schema-violating JSON three times in a row, the circuit breaker "opens," halting script generation for a cooldown period to prevent runaway API costs and infinite retry loops.
+At the boundaries of every agent, Pydantic schemas enforce data integrity. Before the Audio worker accepts data from the Script worker, the payload is validated against a strict schema. If the LLM hallucinated a missing sfx_cues array, the Pydantic validation catches the error immediately, bouncing the request back to the validation layer rather than crashing the video rendering engine downstream. Budget guardrails are built into the state machine, aggregating TPM and RPM counters locally to dynamically pause agents before they hit hard API limits.
+7. Desktop Application Packaging: Tauri and Python
+Deploying heavy Python data processing alongside a modern User Interface requires bridging native web technologies with the Python ecosystem. Electron applications are notoriously bloated (often exceeding 150MB). Tauri v2 offers a vastly superior alternative, producing native OS webviews that yield frontend binaries of approximately 5-10MB.44
+7.1 Architecture and Inter-Process Communication
+The application is architected with a Vue.js/React frontend managed by Tauri, communicating with a PyInstaller-bundled Python backend acting as a "sidecar".44
+Inter-Process Communication (IPC) is handled via asynchronous message passing.47 Rather than relying solely on stdout parsing, which can become corrupted by underlying library logging (e.g., FFmpeg warnings), the Python sidecar spins up a lightweight local FastAPI server on a randomized open port.45 Tauri uses its HTTP fetch APIs to send RESTful POST requests to the Python sidecar to initiate generation jobs, while the sidecar streams Server-Sent Events (SSE) back to the frontend to update granular progress bars, log outputs, and video previews in real-time.48
+7.2 Bundling, Licensing, and Auto-Updates
+Packaging dependencies like moviepy, librosa, and google-cloud-tts into a single executable requires strict .spec file configurations in PyInstaller to ensure dynamic libraries and hidden imports are collected via PyInstaller hooks and the --add-data flag.46
+Crucially, the bundling of FFmpeg introduces complex licensing requirements. FFmpeg is licensed under the LGPLv2.1 (or GPL, depending on build flags).49 To maintain compliance for a commercial, proprietary desktop application, the developer must:
+Ensure the bundled FFmpeg binary is compiled without the --enable-gpl flag.49
+Dynamically link the libraries.49
+Explicitly state in the application's EULA and "About" section that the software uses FFmpeg under the LGPLv2.1, providing a direct link to the FFmpeg source code.49
+To maintain the software lifecycle, the tauri-plugin-updater is integrated.50 This requires signing the release artifacts with a cryptographic private key.51 Upon startup, the Tauri frontend queries a static latest.json file hosted on GitHub Releases or an S3 bucket. If a newer version is detected, it downloads the differential patch or .msi archive, installs it silently, and restarts the application.52
+8. Platform Integration: YouTube API and Analytics Loop
+Publishing and evaluating content autonomously relies on the Google Data API v3 and the YouTube Analytics API.
+8.1 Authentication and Quota Economics
+Desktop applications must implement the OAuth2 loop for Installed Applications. The app opens a local web server, redirects the user to the Google consent screen, captures the authorization code, and exchanges it for a refresh token. This refresh token is securely encrypted and stored locally, allowing the application to mint new access tokens for months without requiring re-authentication.
+A critical bottleneck is the YouTube Data API quota limit. A standard project receives 10,000 units per day. A single video upload consumes 1,600 units. Thus, the application is physically hard-capped at 6 uploads per day per authenticated API key, leaving minimal headroom for thumbnail updates (50 units) or metadata revisions (50 units).53 The application architecture must schedule uploads conservatively, pacing them out to maintain minimum algorithmic gaps between uploads.
+Furthermore, compliance with the YouTube API Terms of Service (Feb 2026) mandates that any automated upload interface must explicitly display an "Upload Certification Warning" to the user, verifying that the uploaded content complies with YouTube Community Guidelines.53 Failure to include this UI element can result in the revocation of API credentials.53 Restrictions specific to Shorts dictate that the video must be under 60 seconds and vertically oriented (9:16); otherwise, the API will categorize it as a standard video.
+8.2 Analytics Delay and Automated Feedback
+To establish a self-improving content loop, the system must fetch performance data via the YouTube Analytics API. Developers must account for the platform's data stabilization lag. Real-time metrics are notoriously unstable; the Analytics API typically experiences a processing delay of 48 to 72 hours before metrics like Average View Duration, Impressions Click-Through Rate (CTR), and Audience Retention graphs become statistically reliable.54
+Fetching data prematurely introduces noise into the feedback loop. The application's local database schedules an analytics cron job that only evaluates videos 7 days post-publication. Metrics fetched include total views, average view percentage, and viewer retention drop-off rates.
+A/B testing in this environment relies on multi-armed bandit algorithms. Since two identical videos cannot be uploaded simultaneously without triggering duplicate content filters, the system iterates over genre templates. If the "Stoic Quotes" template yields an average retention of 65% over 10 videos, while "Scary Stories" yields 82%, the orchestrator dynamically adjusts the sampling weights, instructing the LLM to favor the higher-performing niche in subsequent automated generation cycles. A minimum sample size of roughly 10-15 videos per template is required to separate genuine content performance from algorithmic volatility or "noise."
+9. Content Strategy, Viewer Psychology, and Genre Templates
+Technical execution is irrelevant without an understanding of short-form retention psychology and market positioning.
+9.1 Viewer Retention Psychology
+Data from 2025-2026 indicates that viewer attention spans are increasingly fragile, with up to 50% of the audience swiping away within the first 3 seconds of a YouTube Short if the hook fails to establish an "information gap." The information gap technique forces the LLM to open the script with an unresolved paradox or a counter-intuitive statement (e.g., "This is why sleeping 8 hours is actually destroying your brain.") rather than a standard introduction.
+Regarding optimal duration, empirical data suggests a bifurcated performance curve: highly punchy, looping 15-second shorts perform exceptionally well for comedy and simple facts due to high replayability (pushing Average View Percentage above 100%), whereas 45 to 60-second shorts are favored by the algorithm for storytelling and educational content because they accumulate higher total watch time.
+Pacing is equally critical. Professional shorts average a visual change (cut, zoom, text pop, or image swap) every 1.5 to 2.0 seconds. The application's video orchestrator enforces this by ensuring the Ken Burns effect duration on any single image never exceeds 2.5 seconds before transitioning. Furthermore, the constant presence of heavily animated ASS captions directly combats attention decay by giving the viewer a continuous visual anchor to follow, functionally overriding the urge to swipe.
+9.2 Niche Topologies and Template Architectures
+The top-performing faceless YouTube Shorts niches in 2026 include scary stories, stoic motivation, AI/tech news, Reddit stories, and ambient psychology facts. A genre template system is designed as a JSON-configurable state machine that captures all production parameters:
+
+JSON
+
+
+{
+  "genre": "Scary Stories",
+  "prompt_injection": "Write in a suspenseful, whispered tone.",
+  "voice_settings": {"name": "en-US-Neural2-D", "pitch": "-2st", "rate": "0.90x"},
+  "music_mood": "creepy, ambient, dark",
+  "caption_style": {"font": "Creepster", "color": "&H000000FF", "animation": "glow"},
+  "color_grading": {"contrast": 1.2, "saturation": 0.8}
+}
+
+This template dictates how the sub-agents operate, ensuring that a scary story receives slow, deliberate panning, desaturated visuals, and deep voice processing, while a tech news short receives rapid cuts, bright color grading, and an upbeat TTS voice.
+10. Commercial Viability, Business Models, and Pitfalls
+10.1 Monetization Strategies
+The Total Addressable Market (TAM) for YouTube automation tools is expanding rapidly among non-technical creators, side-hustlers, and digital marketing agencies.
+Existing tools typically adopt a SaaS subscription model ($15–$50/month). However, because this architecture shifts the API costs (Gemini, GCP, Groq) directly onto the user's own API keys (a "Bring Your Own Key" or BYOK model), the ongoing server costs for the developer are near zero. This presents a massive competitive advantage: the software can be sold under a one-time perpetual license model ($49–$99). This pricing strategy is highly attractive in developer and creator communities, frequently leading to viral success on distribution platforms like Product Hunt, AppSumo, and Twitter/X.
+10.2 Best Practices and Systemic Pitfalls
+The failure of video automation tools usually stems from three distinct pitfalls:
+Memory Leaks in Composition: Python video processing retains frames in memory. Without explicit garbage collection and reliance on FFmpeg subprocesses over native numpy manipulation in MoviePy, long generation queues will eventually crash user machines with Out-Of-Memory (OOM) errors.
+Copyright Violations: AI-generated content is under increasing scrutiny. The strict reliance on CC0 audio from Freesound and commercially cleared Pexels/Pixabay stock eliminates copyright strikes, safeguarding user channels. Furthermore, upcoming YouTube policy changes require transparent disclosure of AI-generated content, which the application must handle by setting the selfDeclaredMadeForKids and AI disclosure boolean flags via the YouTube Data API upon upload.
+Algorithmic Repetition: Pure automation often leads to flat, repetitive "slop." Professional video automation companies like Jellysmack and Spotter structure their content pipelines as multivariate testing matrices. By enforcing stringent LLM temperature controls, cross-model Groq validation, dynamic SSML prosody, and randomized pre-lap audio ducking, the desktop application injects sufficient variance to simulate human-level editorial decisions, preventing the output from becoming indistinguishable algorithmic noise.
+By unifying these advanced technical methodologies into a streamlined Tauri desktop environment, the autonomous generation pipeline bypasses traditional heavy-compute bottlenecks, representing a highly scalable, low-overhead solution for modern digital content creation.
+Works cited
+Gemini API Rate Limits 2026: Complete Developer Guide with All ..., accessed on February 23, 2026, https://blog.laozhang.ai/en/posts/gemini-api-rate-limits-guide
+Gemini API Free Tier 2026: Complete Guide to Rate Limits, Models, accessed on February 23, 2026, https://blog.laozhang.ai/en/posts/gemini-api-free-tier
+Gemini API Rate Limits 2026: Complete Per-Tier Guide with All Models, accessed on February 23, 2026, https://aifreeapi.com/en/posts/gemini-api-rate-limits-per-tier
+Gemini API Free Tier Rate Limits: Complete Guide for 2026, accessed on February 23, 2026, https://aifreeapi.com/en/posts/gemini-api-free-tier-rate-limits
+Structured outputs | Gemini API - Google AI for Developers, accessed on February 23, 2026, https://ai.google.dev/gemini-api/docs/structured-output
+Generate structured output (like JSON and enums) using the Gemini, accessed on February 23, 2026, https://firebase.google.com/docs/ai-logic/generate-structured-output
+gemini-samples/examples/gemini-structured-outputs.ipynb at main, accessed on February 23, 2026, https://github.com/philschmid/gemini-samples/blob/main/examples/gemini-structured-outputs.ipynb
+response_schema is not working when using typing.TypedDict #560, accessed on February 23, 2026, https://github.com/google-gemini/deprecated-generative-ai-python/issues/560
+Google Cloud Text To Speech Demo - Vitaly Bicov, accessed on February 23, 2026, https://bicov.pro/blog/new-google-cloud-text-to-speech-demo
+Speech Synthesis Markup Language (SSML) | Cloud Text-to-Speech, accessed on February 23, 2026, https://docs.cloud.google.com/text-to-speech/docs/ssml
+Speech Synthesis Markup Language - Devopedia, accessed on February 23, 2026, https://devopedia.org/speech-synthesis-markup-language
+SSML: The Practical Standard for Controlling Speech Synthesis, accessed on February 23, 2026, https://medium.com/@brijeshrn/ssml-the-practical-standard-for-controlling-speech-synthesis-c52940314ffa
+Get word timestamps | Cloud Speech-to-Text, accessed on February 23, 2026, https://docs.cloud.google.com/speech-to-text/docs/v1/async-time-offsets
+Google Cloud Text-to-speech word timestamps - Stack Overflow, accessed on February 23, 2026, https://stackoverflow.com/questions/55320826/google-cloud-text-to-speech-word-timestamps
+Class SynthesizeSpeechRequest (2.34.0) | Python client libraries, accessed on February 23, 2026, https://docs.cloud.google.com/python/docs/reference/texttospeech/latest/google.cloud.texttospeech_v1beta1.types.SynthesizeSpeechRequest
+Syncing Speech with Text: Adding Timestamps to Text-to ... - Bar Ofner, accessed on February 23, 2026, https://bar-offner.medium.com/syncing-speech-with-text-adding-timestamps-to-text-to-speech-using-python-13fe433b30a0
+jiaaro/pydub @ GitHub, accessed on February 23, 2026, https://www.pydub.com/
+Audio analysis with librosa - NEUROTECH AFRICA, accessed on February 23, 2026, https://blog.neurotech.africa/audio-analysis-with-librosa/
+Manipulating Audio in Python. Intro | by Matt B Segall | Medium, accessed on February 23, 2026, https://matt-b-segall.medium.com/manipulating-audio-in-python-4a4709c47921
+A Comprehensive Guide to Audio Processing with Librosa in Python, accessed on February 23, 2026, https://medium.com/@rijuldahiya/a-comprehensive-guide-to-audio-processing-with-librosa-in-python-a49276387a4b
+librosa: Audio and Music Signal Analysis in Python, accessed on February 23, 2026, https://proceedings.scipy.org/articles/Majora-7b98e3ed-003.pdf
+Introduction to Audio Processing with PyDub | CodeSignal Learn, accessed on February 23, 2026, https://codesignal.com/learn/courses/transcribing-large-files-in-python-using-pydub/lessons/introduction-to-audio-processing-with-pydub
+Rate Limits - GroqDocs, accessed on February 23, 2026, https://console.groq.com/docs/rate-limits
+Pixabay vs. Pexels: Which is best for free stock? - Gralio, accessed on February 23, 2026, https://gralio.ai/compare/pixabay-vs-pexels
+Pexels Review: Free Stock Photos, What's the Catch? - EXPERTE.com, accessed on February 23, 2026, https://www.experte.com/stock-photos/pexels
+The best stock image and video footage APIs (2024) — Shotstack, accessed on February 23, 2026, https://shotstack.io/learn/best-stock-image-video-apis/
+zoonman/pixabay-php-api - GitHub, accessed on February 23, 2026, https://github.com/zoonman/pixabay-php-api
+haanhduclinh/pixabay_api - GitHub, accessed on February 23, 2026, https://github.com/haanhduclinh/pixabay_api
+freesound/_docs/api/source/overview.rst at master - GitHub, accessed on February 23, 2026, https://github.com/MTG/freesound/blob/master/_docs/api/source/overview.rst
+FreesoundAPI - MTG - Music Technology Group (UPF), accessed on February 23, 2026, https://www.upf.edu/web/mtg/technology-portfolio/-/asset_publisher/eFDkHCFq97rR/content/technologies-freesoundapi/maximized
+Freesound - Forums - Use sound without crediting - Freesound, accessed on February 23, 2026, https://freesound.org/forum/legal-help-and-attribution-questions/34631/
+ASS Tags - Aegisub 手册, accessed on February 23, 2026, https://aegi.vmoe.info/docs/3.1/ASS_Tags/
+Kdenlive 24.12.0 released, accessed on February 23, 2026, https://kdenlive.org/news/releases/24.12.0/
+pysubs2 — pysubs2 1.8.0 documentation, accessed on February 23, 2026, https://pysubs2.readthedocs.io/
+CoffeeStraw/PyonFX: An easy way to create KFX (Karaoke Effects, accessed on February 23, 2026, https://github.com/CoffeeStraw/PyonFX
+Supported File Formats — pysubs2 1.8.0 documentation, accessed on February 23, 2026, https://pysubs2.readthedocs.io/en/latest/supported-formats.html
+Quick Start Guide — PyonFX 0.11.0 documentation, accessed on February 23, 2026, https://pyonfx.readthedocs.io/en/latest/quick%20start.html
+How to Create Videos with a Ken Burns Effect using FFmpeg, accessed on February 23, 2026, https://www.bannerbear.com/blog/how-to-do-a-ken-burns-style-effect-with-ffmpeg/
+Zoom-In Effect for moviepy · Issue #1402 - GitHub, accessed on February 23, 2026, https://github.com/Zulko/moviepy/issues/1402
+subtitles - Hardcoding Subs with ffmpeg? - Super User, accessed on February 23, 2026, https://superuser.com/questions/869248/hardcoding-subs-with-ffmpeg
+Saga Design Pattern - Azure Architecture Center | Microsoft Learn, accessed on February 23, 2026, https://learn.microsoft.com/en-us/azure/architecture/patterns/saga
+How to Implement Saga Pattern in Python - OneUptime, accessed on February 23, 2026, https://oneuptime.com/blog/post/2026-01-23-saga-pattern-python/view
+Implementing the Saga Pattern with Choreography and Orchestration, accessed on February 23, 2026, https://medium.com/@dinesharney/implementing-the-saga-pattern-using-choreography-and-orchestration-53e66cbd520e
+Embedding External Binaries - Tauri, accessed on February 23, 2026, https://v2.tauri.app/develop/sidecar/
+GitHub - AlanSynn/vue-tauri-fastapi-sidecar-template: :package, accessed on February 23, 2026, https://github.com/AlanSynn/vue-tauri-fastapi-sidecar-template
+Building an Offline Streamlit Application with Tauri - Level Up Coding, accessed on February 23, 2026, https://levelup.gitconnected.com/building-an-offline-streamlit-application-with-tauri-b1121ae6b646
+Inter-Process Communication - Tauri, accessed on February 23, 2026, https://v2.tauri.app/concept/inter-process-communication/
+Writing a pandas Sidecar for Tauri | MClare Blog, accessed on February 23, 2026, https://mclare.blog/posts/writing-a-pandas-sidecar-for-tauri/
+FFmpeg License and Legal Considerations, accessed on February 23, 2026, https://ffmpeg.org/legal.html
+Understand implementing auto-updates in Tauri - StudyRaid, accessed on February 23, 2026, https://app.studyraid.com/en/read/8393/231528/implementing-auto-updates-in-tauri
+Updater - Tauri, accessed on February 23, 2026, https://v2.tauri.app/plugin/updater/
+Tauri v2 updater - Ratul's Blog, accessed on February 23, 2026, https://ratulmaharaj.com/posts/tauri-automatic-updates/
+YouTube API Services Terms of Service | Google for Developers, accessed on February 23, 2026, https://developers.google.com/youtube/terms/api-services-terms-of-service
+Issues with YouTube Analytics data syncing - Google Help, accessed on February 23, 2026, https://support.google.com/youtube/thread/400074099?hl=en&msgid=400437668
+Issues with YouTube Analytics data syncing - Google Help, accessed on February 23, 2026, https://support.google.com/youtube/thread/400074099?hl=en&msgid=402244309

@@ -1,0 +1,420 @@
+# Genre Research Collection Guide
+
+**For:** Your friend analyzing top-performing YouTube Shorts per genre.
+**Goal:** Collect everything needed to build accurate genre templates and few-shot examples for the pipeline.
+
+---
+
+## Per-Video Data Sheet
+
+For each viral Short analyzed, fill this out:
+
+### 1. Basic Info
+```
+Video URL:           ___________________
+Channel:             ___________________
+Channel subs:        ___________________  (for normalizing performance)
+Views:               ___________________
+Likes:               ___________________
+Comments:            ___________________
+Upload date:         ___________________
+Video duration:      ___ seconds
+```
+
+### 2. Script Anatomy (MOST IMPORTANT)
+```
+Full transcript:     (write out word for word)
+Word count:          ___
+Sentence count:      ___
+Words per second:    ___ (word count ÷ duration)
+
+Structure:
+  Hook (first sentence):     "________________________"
+  Hook type:                 [ ] Question  [ ] Shocking fact  [ ] "What if"
+                             [ ] Challenge  [ ] Story opener  [ ] Stat/number
+  Body sentences:            ___ count
+  Twist/reveal present?      [ ] Yes  [ ] No
+  Ending type:               [ ] Cliffhanger  [ ] Call to curiosity
+                             [ ] Question  [ ] Punchline  [ ] Open-ended
+
+Power words used:      [list all emotionally strong words]
+Rhetorical questions:  ___ count
+Tense used:            [ ] Present  [ ] Past  [ ] Mixed
+Person (POV):          [ ] "You" (2nd person)  [ ] "They"  [ ] Narrator voice
+```
+
+**→ Feeds into:** `script.idea_prompt`, `script.script_prompt`, `script.validation`, few-shot example library
+
+### 3. Hook Deep-Dive
+```
+First 5 words:         "________________________"
+Does hook contain:
+  [ ] A number/statistic     (e.g., "In 1947...")
+  [ ] A question             (e.g., "Did you know...")
+  [ ] An impossibility       (e.g., "NASA found something they can't explain")
+  [ ] A challenge            (e.g., "You won't be able to sleep after this")
+  [ ] A mystery              (e.g., "Nobody knows why...")
+  [ ] A time reference       (e.g., "Last week...")
+
+Hook emotional trigger: [ ] Curiosity  [ ] Fear  [ ] Shock
+                        [ ] Disbelief  [ ] Humor  [ ] FOMO
+How fast is the hook?   ___ seconds (time to first period/pause)
+```
+
+**→ Feeds into:** `script.required_hook_words`, `script.validation`, analytics hook pattern scoring
+
+### 4. Voice & Pacing
+```
+Voice gender:          [ ] Male  [ ] Female
+Voice tone:            [ ] Deep/authoritative  [ ] Casual/friendly
+                       [ ] Whispery/dramatic  [ ] Energetic/fast
+Speaking speed:        [ ] Slow (<2.5 w/s)  [ ] Medium (2.5-3.5)  [ ] Fast (>3.5)
+Notable pauses:
+  After hook?          [ ] Yes — ~___ms  [ ] No
+  Before reveal?       [ ] Yes — ~___ms  [ ] No
+  Dramatic pauses?     Where: ___________________
+Emphasis on words:     [list words spoken louder/slower]
+```
+
+**→ Feeds into:** `voice.speaking_rate`, `voice.pitch`, `voice.ssml.pause_after_hook_ms`, `voice.ssml.emphasis_words`
+
+### 5. Visual Style
+```
+Layout:                [ ] Full-screen images  [ ] Split (images + gameplay)
+                       [ ] Full gameplay  [ ] Talking head  [ ] Screen recording
+
+If images:
+  How many images?     ___
+  Image change timing: Every ___ seconds
+  Transition type:     [ ] Cut  [ ] Dissolve  [ ] Fade  [ ] Slide  [ ] Zoom
+  Image style:         [ ] Dark/moody  [ ] Bright/colorful  [ ] Minimalist
+                       [ ] Stock photos  [ ] AI-generated  [ ] Screenshots
+  Ken Burns effect?    [ ] Yes  [ ] No
+  Images match words?  [ ] Perfectly synced  [ ] Loosely related  [ ] Random
+
+If gameplay:
+  Which game:          ___________________
+  Game fills:          [ ] Full screen  [ ] Bottom half  [ ] Background
+
+Captions visible?      [ ] Yes  [ ] No
+Caption style:         [ ] Word-at-a-time  [ ] Sentence highlight  [ ] Karaoke
+                       [ ] Emphasis only  [ ] No visible style
+Caption font:          ___________________ (if recognizable)
+Caption color:         Primary: ___  Highlight: ___
+Caption position:      [ ] Top  [ ] Center  [ ] Bottom
+Caption border/glow:   [ ] Yes  [ ] No
+```
+
+**→ Feeds into:** `captions.*`, `layout.*`, `images.*`
+
+### 6. Audio
+```
+Background music?      [ ] Yes  [ ] No
+  Music mood:          [ ] Eerie  [ ] Upbeat  [ ] Dramatic  [ ] Chill  [ ] Tense
+  Music volume:        [ ] Barely audible  [ ] Noticeable  [ ] Loud
+  Music fades in/out?  [ ] Yes  [ ] No
+
+Sound effects?         [ ] Yes  [ ] No
+  SFX at hook?         [ ] Yes — what: ___________
+  SFX at reveal/twist? [ ] Yes — what: ___________
+  SFX at ending?       [ ] Yes — what: ___________
+  Other SFX:           ___________________
+```
+
+**→ Feeds into:** `audio.music.*`, `audio.sfx[]`
+
+### 7. Upload Metadata
+```
+Title pattern:         "________________________"
+  Title has emojis?    [ ] Yes: ___  [ ] No
+  Title has hashtags?  [ ] Yes  [ ] No
+  Title length:        ___ characters
+
+Description (first line): "________________________"
+Tags/hashtags used:    [list all]
+Category:              ___________________
+Time posted:           ___ (if visible)
+```
+
+**→ Feeds into:** `upload.title_template`, `upload.description_template`, `upload.tags`
+
+### 8. Why Did This Work? (Your Analysis)
+```
+What makes this video engaging?
+_____________________________________________________________
+
+What would you change to make it better?
+_____________________________________________________________
+
+Score (1-10):
+  Hook strength:       ___
+  Script quality:      ___
+  Visual appeal:       ___
+  Audio quality:       ___
+  Overall:             ___
+```
+
+---
+
+## ✅ FILLED EXAMPLE — Scary Story Short
+
+Here's what a completed analysis looks like so you know exactly what quality of notes to aim for:
+
+### 1. Basic Info
+```
+Video URL:           youtube.com/shorts/xYz123abc
+Channel:             @DarkFactsDaily
+Channel subs:        850K
+Views:               14.2M
+Likes:               620K
+Comments:            8,400
+Upload date:         2024-11-15
+Video duration:      52 seconds
+```
+
+### 2. Script Anatomy
+```
+Full transcript:
+"Did you know that in 1973, a family in Connecticut bought their dream home, 
+only to discover that the previous owner had sealed an entire room behind 
+a brick wall? When construction workers finally broke through, they found 
+a child's bedroom that hadn't been touched in 40 years. The bed was still 
+made. Toys were still on the floor. And on the wall, someone had scratched 
+the words 'she can hear you' over and over again. The family moved out 
+three days later. To this day, no one knows who the room belonged to. 
+And the house? It's still for sale."
+
+Word count:          108
+Sentence count:      7
+Words per second:    2.08 (108 ÷ 52)
+
+Structure:
+  Hook (first sentence):     "Did you know that in 1973, a family 
+                              in Connecticut bought their dream home?"
+  Hook type:                 [x] Question  [x] Stat/number (year)
+  Body sentences:            4 count
+  Twist/reveal present?      [x] Yes — "she can hear you"
+  Ending type:               [x] Open-ended — "it's still for sale"
+
+Power words used:      [dream, discover, sealed, scratched, hear, moved out]
+Rhetorical questions:  0 count (but the hook IS a question)
+Tense used:            [x] Past
+Person (POV):          [x] Narrator voice
+```
+
+### 3. Hook Deep-Dive
+```
+First 5 words:         "Did you know that in"
+Does hook contain:
+  [ ] A number/statistic     — not a stat but has a year
+  [x] A question             — "Did you know"
+  [ ] An impossibility
+  [ ] A challenge
+  [x] A mystery              — implies something strange was found
+  [x] A time reference       — "in 1973"
+
+Hook emotional trigger: [x] Curiosity  [ ] Fear (not yet, comes later)
+How fast is the hook?   4.5 seconds (quick setup before the sealed room reveal)
+```
+
+### 4. Voice & Pacing
+```
+Voice gender:          [x] Male
+Voice tone:            [x] Deep/authoritative (slightly dramatic)
+Speaking speed:        [x] Slow (<2.5 w/s) — 2.08 w/s, deliberate pacing
+Notable pauses:
+  After hook?          [x] Yes — ~600ms (pause after "dream home")
+  Before reveal?       [x] Yes — ~800ms (long pause before "she can hear you")
+  Dramatic pauses?     Where: After "hadn't been touched in 40 years" (~400ms)
+                              After "she can hear you" (~700ms)
+Emphasis on words:     [sealed, 40 years, scratched, "she can hear you", still for sale]
+```
+
+### 5. Visual Style
+```
+Layout:                [x] Split (images + gameplay)
+
+If images:
+  How many images?     5
+  Image change timing: Every 8-12 seconds (synced to sentences)
+  Transition type:     [x] Dissolve (slow, ~500ms)
+  Image style:         [x] Dark/moody
+                       [x] Stock photos (abandoned houses, dark hallways)
+  Ken Burns effect?    [x] Yes — slow zoom in
+  Images match words?  [x] Perfectly synced
+  Image list:
+    1. Old Connecticut house exterior (during hook)
+    2. Brick wall close-up (during "sealed a room")
+    3. Abandoned child's bedroom (during "child's bedroom")
+    4. Scratched wall texture (during "she can hear you")
+    5. Empty house with "For Sale" sign (during ending)
+
+If gameplay:
+  Which game:          Minecraft parkour (dark/cave themed)
+  Game fills:          [x] Bottom half
+
+Captions visible?      [x] Yes
+Caption style:         [x] Word-at-a-time (2-3 words per pop)
+Caption font:          Bold sans-serif (looks like Montserrat Black)
+Caption color:         Primary: White  Highlight: Red (on power words)
+Caption position:      [x] Center
+Caption border/glow:   [x] Yes — black border ~3px, slight red glow on emphasis
+```
+
+### 6. Audio
+```
+Background music?      [x] Yes
+  Music mood:          [x] Eerie (low drone, subtle dissonant strings)
+  Music volume:        [x] Barely audible (under narration, builds slightly at reveal)
+  Music fades in/out?  [x] Yes — fades in 2s at start, out 3s at end
+
+Sound effects?         [x] Yes
+  SFX at hook?         [x] Yes — subtle low bass hit after "dream home"
+  SFX at reveal/twist? [x] Yes — sharp horror stinger on "she can hear you"
+  SFX at ending?       [x] Yes — deep drone/rumble on "still for sale"
+  Other SFX:           Faint scratching sound during the "scratched the words" line
+```
+
+### 7. Upload Metadata
+```
+Title pattern:         "This Family Found A Sealed Room In Their Home 😨"
+  Title has emojis?    [x] Yes: 😨
+  Title has hashtags?  [ ] No (in description instead)
+  Title length:        52 characters
+
+Description (first line): "Would you stay? 😱"
+Tags/hashtags used:    #shorts #scary #creepy #horror #haunted #truestory
+                       #mystery #creepytiktok #scarystories
+Category:              People & Blogs
+Time posted:           9:30 PM EST (Friday)
+```
+
+### 8. Why Did This Work?
+```
+What makes this video engaging?
+- The hook is a "did you know" question with a specific year — feels real and factual
+- Each sentence reveals one MORE disturbing detail, escalating perfectly
+- "she can hear you" is a killer line — personal, directed at YOU
+- The ending is open ("still for sale") — makes you want to comment and share
+- Pacing is SLOW — gives you time to feel uneasy, doesn't rush
+- Images perfectly match each sentence — you SEE the room, the wall
+- Music builds without being distracting
+
+What would you change to make it better?
+- Could start even faster — "In 1973" before "did you know" would save 1 second
+- The gameplay bottom half is slightly distracting from the immersion
+- Could add one more sentence about what happened to the previous owner
+
+Score (1-10):
+  Hook strength:       9
+  Script quality:      9
+  Visual appeal:       8
+  Audio quality:       8
+  Overall:             9
+```
+
+### What We Extract for the Pipeline
+
+From this ONE video, we now know:
+- **Script:** "Did you know" hooks + escalating reveals + open endings work for horror
+- **Voice:** Deep male, ~2.0 w/s, 600-800ms pauses at key moments
+- **Emphasis words:** `sealed`, `scratched`, `hear`, `still for sale` → add to genre emphasis list
+- **Captions:** Word-at-a-time, white + red highlight, center position
+- **Images:** Dark/moody, 5 images synced to sentences, dissolve transitions
+- **Audio:** Eerie drone, SFX stinger on twist, barely audible music
+- **Upload:** Emoji in title, question in description, 9-10 PM Friday posting
+
+---
+
+## Per-Genre Summary (After Analyzing 15+ Videos)
+
+After studying ~15 top videos in one genre, compile patterns:
+
+```yaml
+# Genre: [name]
+# Videos analyzed: ___
+# Average views: ___
+
+patterns:
+  avg_word_count: ___
+  avg_duration_seconds: ___
+  avg_words_per_second: ___
+  
+  hook_types_ranked:        # most common → least
+    1. ___
+    2. ___
+    3. ___
+  
+  common_first_words:       # "Did you know", "What if", etc.
+    - "___"
+    - "___"
+  
+  ending_types_ranked:
+    1. ___
+    2. ___
+  
+  power_words:              # words that appear across multiple top videos
+    - "___"
+    - "___"
+  
+  voice_preference:         # "deep male", "energetic female", etc.
+    gender: ___
+    tone: ___
+    speed: ___
+  
+  visual_style:
+    dominant_layout: ___
+    avg_images: ___
+    transition_type: ___
+    color_palette: ___
+  
+  caption_style:
+    dominant_mode: ___
+    font_style: ___
+    colors: ___
+  
+  music_mood: ___
+  sfx_frequency: ___          # "always", "sometimes", "never"
+  
+  title_patterns:
+    - "___"
+    - "___"
+  
+  best_posting_times: ___
+```
+
+**This summary directly becomes the starting point for that genre's YAML template.**
+
+---
+
+## How Many Videos to Analyze?
+
+| Priority | Count | Focus |
+|---|---|---|
+| **Must have** | 15 per genre | Top-performing (most views in last 6 months) |
+| **Nice to have** | +5 "failures" per genre | Low-view videos to understand what NOT to do |
+| **Bonus** | +5 rising creators | Small channels blowing up — freshest patterns |
+
+**Start with 2-3 genres** (scary stories + motivation + tech/AI are the best test genres).
+
+---
+
+## Quick Checklist: "Did I Collect Everything?"
+
+For each video, make sure you have:
+- [ ] Full word-for-word transcript
+- [ ] First 5 words of the hook noted
+- [ ] Hook type classified
+- [ ] Word count + sentence count
+- [ ] Power words listed
+- [ ] 3+ emphasis words noted
+- [ ] Voice speed classified (slow/medium/fast)
+- [ ] Pause locations noted
+- [ ] Caption style identified
+- [ ] Layout type identified
+- [ ] Image count + transition type
+- [ ] Music mood noted
+- [ ] SFX placements noted
+- [ ] Title pattern recorded
+- [ ] Tags/hashtags listed
+- [ ] Your personal quality score (1-10)

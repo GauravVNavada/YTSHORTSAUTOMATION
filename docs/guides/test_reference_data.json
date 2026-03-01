@@ -1,0 +1,122 @@
+{
+  "description": "Generic test data for the Reference Sheet. Contains 10 sample scary_stories scripts for testing the pipeline. Copy these into the 'scary_stories' tab of your Reference Google Sheet.",
+  "genres": [
+    {
+      "genre_id": "scary_stories",
+      "display_name": "Scary Stories & Mysteries",
+      "icon": "👻",
+      "difficulty": "Easy",
+      "is_active": true
+    },
+    {
+      "genre_id": "psychology",
+      "display_name": "Psychology Facts",
+      "icon": "🧠",
+      "difficulty": "Medium",
+      "is_active": true
+    },
+    {
+      "genre_id": "history",
+      "display_name": "History Facts",
+      "icon": "🏛️",
+      "difficulty": "Medium",
+      "is_active": true
+    },
+    {
+      "genre_id": "motivation",
+      "display_name": "Motivation & Mindset",
+      "icon": "💪",
+      "difficulty": "Easy",
+      "is_active": true
+    },
+    {
+      "genre_id": "tech_ai",
+      "display_name": "Tech & AI News",
+      "icon": "🤖",
+      "difficulty": "Medium",
+      "is_active": true
+    }
+  ],
+  "genre_config": [
+    {
+      "genre_id": "scary_stories",
+      "tts_voice": "en-US-Neural2-D",
+      "tts_rate": 0.88,
+      "tts_pitch": -2.0,
+      "layout": "split_screen",
+      "caption_preset": "horror_red",
+      "music_mood": "dark_ambient"
+    },
+    {
+      "genre_id": "psychology",
+      "tts_voice": "en-US-Neural2-F",
+      "tts_rate": 0.95,
+      "tts_pitch": 0.0,
+      "layout": "full_image",
+      "caption_preset": "clean_pro",
+      "music_mood": "neutral"
+    }
+  ],
+  "scary_stories_scripts": [
+    {
+      "script_text": "You wake up at 3 AM to the sound of scratching inside your walls. You grab a flashlight and press your ear against the plaster. The scratching stops. Then something whispers your name. You call pest control the next morning. They open the wall and find a small room. Inside, there's a chair facing a one-way mirror into your bedroom. The chair is still warm.",
+      "hook_pattern": "second_person_time",
+      "quality_score": 9.2,
+      "word_count": 68
+    },
+    {
+      "script_text": "In 1987, a family in rural Ohio bought a farmhouse at auction. The previous owners had vanished. While renovating the basement, the father found a door behind the drywall. Behind it was a narrow staircase leading down to a concrete room. On the walls, someone had written the same sentence over and over again. 'They come back when you sleep.' The family moved out that same night. They never returned for their belongings.",
+      "hook_pattern": "historical_date",
+      "quality_score": 9.0,
+      "word_count": 79
+    },
+    {
+      "script_text": "A security guard working the night shift at an abandoned hospital noticed something on the CCTV. A figure walked down the corridor on the third floor. The problem? That floor had been sealed for fifteen years. He called his supervisor. When they reviewed the footage together, the figure stopped walking. It turned to face the camera. And smiled.",
+      "hook_pattern": "character_scenario",
+      "quality_score": 8.8,
+      "word_count": 63
+    },
+    {
+      "script_text": "There's a road in Japan that no GPS will navigate you through. Locals call it the Silence Road. In 2019, a travel vlogger decided to drive it anyway. He filmed the entire trip on his dashcam. For the first twenty minutes, everything was normal. Then the trees started looking exactly the same. The same curve repeated. His GPS showed he was driving in a straight line, but the odometer proved he had traveled the same mile six times. He never uploaded the full footage. He refuses to explain why.",
+      "hook_pattern": "mystery_location",
+      "quality_score": 9.4,
+      "word_count": 100
+    },
+    {
+      "script_text": "Your phone rings at 2 in the morning. The caller ID shows your own number. You answer. It is your voice on the other end, crying. It says one sentence: 'Don't go to work tomorrow.' Then hangs up. You laugh it off and go back to sleep. The next day, on your commute, traffic is stopped. There has been a massive accident at the exact time you normally pass through. Every car in the pileup is destroyed. You check your call history. There is no record of the call.",
+      "hook_pattern": "second_person_time",
+      "quality_score": 9.5,
+      "word_count": 96
+    },
+    {
+      "script_text": "Hikers in the Appalachian Mountains have reported hearing children laughing deep in the woods at night. Search teams have investigated dozens of times. They never find children. What they do find are small handprints pressed into the mud. The prints always lead deeper into the forest and then stop abruptly at the edge of a cliff. Park rangers have closed that trail three times in the last decade. It keeps getting reopened by someone. They do not know who.",
+      "hook_pattern": "mystery_location",
+      "quality_score": 8.7,
+      "word_count": 82
+    },
+    {
+      "script_text": "A woman bought a vintage mirror from a flea market for twelve dollars. She hung it in her hallway. That night, she woke up thirsty and walked past it. In the mirror, her reflection was already standing there, watching her. The reflection was wearing different clothes. She smashed the mirror with a hammer. Three days later, she found another mirror in her attic. She had never gone into her attic before. It was the same mirror. Without a single crack.",
+      "hook_pattern": "character_scenario",
+      "quality_score": 9.1,
+      "word_count": 84
+    },
+    {
+      "script_text": "In 1954, a man arrived at Tokyo's Haneda Airport with a passport from a country called Taured. He pointed to Andorra on the map and insisted it was called Taured and had existed for a thousand years. His passport had stamps from previous visits to Japan. Immigration detained him in a hotel room with two guards outside the door. By morning, the man had vanished from a room fourteen floors up. His passport and all documentation had vanished with him. The case was never solved.",
+      "hook_pattern": "historical_date",
+      "quality_score": 9.3,
+      "word_count": 95
+    },
+    {
+      "script_text": "You are the last person to leave the office every night. You like the quiet. One evening, you hear the printer start running. You walk over. It prints a single page. On it is a photograph of you sitting at your desk, taken from the corner of the ceiling. You look up. There is no camera there. You look back at the photo. In it, something is standing behind your chair. You are too afraid to turn around.",
+      "hook_pattern": "second_person_time",
+      "quality_score": 9.6,
+      "word_count": 83
+    },
+    {
+      "script_text": "Deep in the Amazon rainforest, researchers found a tribe with no contact with the modern world. When shown photographs for the first time, the tribe members became terrified. Not of the technology. They recognized faces in the photos. People from their own tribe. People who had died decades ago. The researchers assumed it was coincidence. Then the tribe showed them something in return. Cave paintings, thousands of years old. The paintings showed people holding flat, glowing rectangles. Taking pictures.",
+      "hook_pattern": "mystery_location",
+      "quality_score": 9.7,
+      "word_count": 85
+    }
+  ]
+}

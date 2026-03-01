@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Keys & secrets (NEVER commit these!)
+*-key.json
+*.enc
+.env
+config/secrets.json
+
+# Assets (too large for git)
+assets/gameplay/
+assets/music/
+assets/sfx/
+
+# Build artifacts
+dist/
+build/
+*.exe
+*.spec
+
+# Tauri
+frontend/src-tauri/target/
+frontend/node_modules/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Antigravity
+.gemini/

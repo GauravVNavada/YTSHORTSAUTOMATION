@@ -1,0 +1,2595 @@
+Youtube shorts Automation
+----------------------------------------------------------------------------------
+idea.json – Sample on because file is too big
+----------------------------------------------
+"idea0026": {
+  "status": "pending",
+  "variants_enabled": false,
+  "youtube": {
+    "title": "Earth’s Rotation Is Slowing Down 🌍⏱️ #shorts #science #facts",
+    "description": "Earth is not spinning at a constant speed.\n\nThis video explains why Earth’s rotation is slowly slowing down, how the Moon causes it, and what that means for time itself.\n\nSmall forces. Planet-scale effects.\n\nFollow Fact4Sigma for science facts that actually make sense.",
+    "tags": [
+      "shorts",
+      "science",
+      "earth",
+      "space",
+      "time",
+      "moon",
+      "physics",
+      "education",
+      "interesting facts",
+      "facts",
+      "gen z",
+      "viral shorts"
+    ],
+    "category": "Education"
+  },
+
+  "script": {
+    "hook": "WAIT. Earth is spinning slower than it used to.",
+    "beat": "Not suddenly. But constantly.",
+    "lore": "Earth’s rotation is slowing down every year. The Moon pulls on Earth’s oceans, creating tides. Those tides steal rotational energy. That energy transfers to the Moon, pushing it farther away. Earth loses speed so the Moon can gain distance.",
+    "cta": "Subscribe to Fact4Sigma. Space changes everything."
+  },
+
+  "captions": {
+    "style": "classic",
+    "max_words": 3,
+    "max_chars": 18,
+    "highlight_emphasis": true,
+    "emphasis": {
+      "Earth": "yellow",
+      "rotation": "yellow",
+      "Moon": "yellow",
+      "time": "yellow"
+    }
+  },
+
+  "audio": {
+    "music": {
+      "asset": "conspiracy",
+      "overrides": {}
+    },
+    "sfx": [
+      {
+        "asset": "minecraft_damage",
+        "at_word": "WAIT"
+      },
+      {
+        "asset": "whoosh",
+        "at_word": "tides"
+      },
+      {
+        "asset": "soft_riser",
+        "at_segment": "lore"
+      }
+    ]
+  },
+
+  "overlays": [
+    {
+      "asset": "earth",
+      "at_word": "Earth"
+    },
+    {
+      "asset": "moon",
+      "at_word": "Moon"
+    },
+    {
+      "asset": "ocean",
+      "at_word": "tides"
+    },
+    {
+      "asset": "clock",
+      "at_word": "year"
+    },
+
+    {
+      "asset": "subscribe",
+      "at_word": "subscribe",
+      "extend": true
+    },
+    {
+      "asset": "avatar_thinking_4",
+      "at_word": "subscribe"
+    }
+  ],
+
+  "video": {
+    "gameplay": "assets/gameplay/subway.mp4",
+    "resolution": "1080x1920",
+    "fps": 30,
+    "font": "assets/fonts/KOMIKAX_.ttf"
+  },
+
+  "log": {
+    "created_at": null,
+    "rendered_at": null,
+    "uploaded_at": null,
+    "video_path": null
+  }
+}
+
+----------------------------------------------------------------------------------
+assets_registry.json
+----------------------------------------------
+{
+  "music": {
+    "bg_loop_01": {
+      "path": "assets/music/bg_loop_01.MP3",
+      "default_volume": -5,
+      "loop": true,
+      "duck_under_voice": true,
+      "mood": ["neutral", "explainer"],
+      "energy": "low"
+    },
+    "all_in": {
+      "path": "assets/music/All In - Everet Almond.mp3",
+      "default_volume": -6,
+      "loop": true,
+      "duck_under_voice": true,
+      "mood": ["intense", "build"],
+      "energy": "high"
+    },
+    "boomin": {
+      "path": "assets/music/Boomin' - Dan _Lebo_ Lebowitz, Tone Seeker.mp3",
+      "default_volume": -7,
+      "loop": true,
+      "duck_under_voice": true,
+      "mood": ["hype"],
+      "energy": "high"
+    },
+    "conspiracy": {
+      "path": "assets/music/Conspiracy Theory - Rod Kim.mp3",
+      "default_volume": -8,
+      "loop": true,
+      "duck_under_voice": true,
+      "mood": ["mystery", "suspense"],
+      "energy": "medium"
+    },
+    "echo_sax": {
+      "path": "assets/music/Echo Sax End -  [Looped] - by Caleb Arredondo - Caleb Arredondo.mp3",
+      "default_volume": -9,
+      "loop": true,
+      "duck_under_voice": true,
+      "mood": ["calm", "reflective"],
+      "energy": "low"
+    },
+    "f16": {
+      "path": "assets/music/F16 - The Grey Room _ Golden Palms.mp3",
+      "default_volume": -6,
+      "loop": true,
+      "duck_under_voice": true,
+      "mood": ["fast", "motion"],
+      "energy": "high"
+    },
+    "feeling_blue": {
+      "path": "assets/music/Feeling Blue - Caleb Arredondo.mp3",
+      "default_volume": -9,
+      "loop": true,
+      "duck_under_voice": true,
+      "mood": ["sad", "existential"],
+      "energy": "low"
+    },
+    "van_life": {
+      "path": "assets/music/Van Life Rager - Everet Almond.mp3",
+      "default_volume": -6,
+      "loop": true,
+      "duck_under_voice": true,
+      "mood": ["energetic", "fun"],
+      "energy": "high"
+    },
+    "faszo": {
+      "path": "assets/music/Faszo - Mini Vandals.mp3",
+      "default_volume": -7,
+      "loop": true,
+      "duck_under_voice": true,
+      "mood": ["quirky", "playful"],
+      "energy": "medium"
+    },
+    "you_should": {
+      "path": "assets/music/You Should - Patrick Patrikios.mp3",
+      "default_volume": -8,
+      "loop": true,
+      "duck_under_voice": true,
+      "mood": ["motivational"],
+      "energy": "medium"
+    }
+  },
+
+  "sfx": {
+    "minecraft_damage": {
+      "path": "assets/sfx/minecraft_damage.mp3",
+      "default_volume": 10,
+      "category": "impact",
+      "use_case": ["hook", "shock"]
+    },
+    "riser": {
+      "path": "assets/sfx/riser.MP3",
+      "default_volume": 10,
+      "category": "riser",
+      "use_case": ["hook", "transition"]
+    },
+    "bass_impact": {
+      "path": "assets/sfx/bass-impact-327529.mp3",
+      "default_volume": 8,
+      "category": "impact",
+      "use_case": ["reveal", "drop"]
+    },
+    "impact_cinematic": {
+      "path": "assets/sfx/impact-cinematic-boom-05-352465.mp3",
+      "default_volume": 9,
+      "category": "impact",
+      "use_case": ["shock", "reveal"]
+    },
+    "whoosh": {
+      "path": "assets/sfx/simple-whoosh-382724.mp3",
+      "default_volume": 6,
+      "category": "transition",
+      "use_case": ["caption_change"]
+    },
+    "whoosh_alt": {
+      "path": "assets/sfx/whoosh-effect-382717.mp3",
+      "default_volume": 6,
+      "category": "transition",
+      "use_case": ["scene_change"]
+    },
+    "glitch": {
+      "path": "assets/sfx/glitch-sfx-312910.mp3",
+      "default_volume": 5,
+      "category": "glitch",
+      "use_case": ["reality_break"]
+    },
+    "digital_glitch": {
+      "path": "assets/sfx/digital-glitch-noise-hd-379465.mp3",
+      "default_volume": 5,
+      "category": "glitch",
+      "use_case": ["reality_break"]
+    },
+    "error": {
+      "path": "assets/sfx/error-126627.mp3",
+      "default_volume": 6,
+      "category": "ui",
+      "use_case": ["fail", "joke"]
+    },
+    "windows_error": {
+      "path": "assets/sfx/windows-error-sound-effect-35894.mp3",
+      "default_volume": 6,
+      "category": "ui",
+      "use_case": ["fail", "meme"]
+    },
+    "notification": {
+      "path": "assets/sfx/notification-457196.mp3",
+      "default_volume": 5,
+      "category": "ui",
+      "use_case": ["cta"]
+    },
+    "ding": {
+      "path": "assets/sfx/ding-101492.mp3",
+      "default_volume": 5,
+      "category": "ui",
+      "use_case": ["confirmation"]
+    }
+  },
+
+  "overlays": {
+    "brain": {
+      "path": "assets/overlays/images/brain_1024.png",
+      "type": "image",
+      "anchor": "top_center",
+      "y_offset": -30,
+      "scale": 0.45,
+      "z_index": 5,
+      "keywords": ["brain", "mind", "thinking"]
+    },
+    "brain_alt": {
+      "path": "assets/overlays/images/brain_inside_head_think_mentality_brain_1024.png",
+      "type": "image",
+      "anchor": "top_center",
+      "y_offset": -30,
+      "scale": 0.45,
+      "z_index": 5,
+      "keywords": ["brain", "mind", "thinking"]
+    },
+    "avatar_thinking_1": {
+      "path": "assets/overlays/images/avatar_thinking_1_1024.png",
+      "type": "image",
+      "anchor": "top_center",
+      "y_offset": -40,
+      "scale": 0.4,
+      "z_index": 5,
+      "keywords": ["thinking", "confused"]
+    },
+    "avatar_thinking_2": {
+      "path": "assets/overlays/images/avatar_thinking_2_1024.png",
+      "type": "image",
+      "anchor": "top_center",
+      "y_offset": -40,
+      "scale": 0.4,
+      "z_index": 5,
+      "keywords": ["thinking", "confused"]
+    },
+    "earth": {
+      "path": "assets/overlays/images/earth_blue_1024.png",
+      "type": "image",
+      "anchor": "top_center",
+      "y_offset": -120,
+      "scale": 0.45,
+      "z_index": 5,
+      "keywords": ["earth", "planet", "world"]
+    },
+    "clock": {
+      "path": "assets/overlays/images/clock_1024.png",
+      "type": "image",
+      "anchor": "top_center",
+      "y_offset": -120,
+      "scale": 0.45,
+      "z_index": 5,
+      "keywords": ["time", "clock"]
+    },
+    "atom": {
+      "path": "assets/overlays/images/atom_icon_1024.png",
+      "type": "image",
+      "anchor": "top_center",
+      "y_offset": -120,
+      "scale": 0.4,
+      "z_index": 5,
+      "keywords": ["atom", "physics"]
+    },
+    "subscribe": {
+      "path": "assets/overlays/images/subscribe_icon_1024.png",
+      "type": "image",
+      "anchor": "bottom_center",
+      "y_offset": -360,
+      "scale": 0.6,
+      "z_index": 20,
+      "keywords": ["subscribe", "follow"]
+    },
+    "warning": {
+      "path": "assets/overlays/images/warning_black_1024.png",
+      "type": "image",
+      "anchor": "top_center",
+      "y_offset": -50,
+      "scale": 0.4,
+      "z_index": 10,
+      "keywords": ["warning", "alert"]
+    },
+    "eye": {
+      "path": "assets/overlays/images/eye_1024.png",
+      "type": "image",
+      "anchor": "top_center",
+      "y_offset": -80,
+      "scale": 0.4,
+      "z_index": 10,
+      "keywords": ["see", "watch", "vision", "perception", "eyes"]
+    },
+    "fire": {
+      "path": "assets/overlays/images/fire_1024.png",
+      "type": "image",
+      "anchor": "top_center",
+      "y_offset": -100,
+      "scale": 0.45,
+      "z_index": 12,
+      "keywords": ["fire", "hot", "burn", "energy", "hype", "intense"]
+    },
+    "lightning": {
+      "path": "assets/overlays/images/lightning_1024.png",
+      "type": "image",
+      "anchor": "top_center",
+      "y_offset": -110,
+      "scale": 0.45,
+      "z_index": 12,
+      "keywords": ["lightning", "shock", "electric", "power", "fast"]
+    },
+    "lock_open": {
+      "path": "assets/overlays/images/lock_open_1024.png",
+      "type": "image",
+      "anchor": "top_center",
+      "y_offset": -90,
+      "scale": 0.4,
+      "z_index": 10,
+      "keywords": ["unlock", "open", "secret", "access", "exposed"]
+    },
+    "lock_closed": {
+      "path": "assets/overlays/images/lock_closed_1024.png",
+      "type": "image",
+      "anchor": "top_center",
+      "y_offset": -90,
+      "scale": 0.4,
+      "z_index": 10,
+      "keywords": ["locked", "secret", "hidden", "secure", "forbidden"]
+    },
+    "question_mark": {
+      "path": "assets/overlays/images/question_mark_1024.png",
+      "type": "image",
+      "anchor": "top_center",
+      "y_offset": -70,
+      "scale": 0.4,
+      "z_index": 10,
+      "keywords": ["question", "why", "confused", "mystery", "unknown"]
+    },
+    "rocket": {
+      "path": "assets/overlays/images/rocket_1024.png",
+      "type": "image",
+      "anchor": "top_center",
+      "y_offset": -120,
+      "scale": 0.45,
+      "z_index": 10,
+      "keywords": ["rocket", "space", "launch", "fast", "speed"]
+    },
+    "skull": {
+      "path": "assets/overlays/images/skull_1024.png",
+      "type": "image",
+      "anchor": "top_center",
+      "y_offset": -90,
+      "scale": 0.4,
+      "z_index": 12,
+      "keywords": ["skull", "death", "danger", "crazy", "mindblown"]
+    },
+"airplane": {
+  "path": "assets/overlays/images/airplane.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["airplane", "flight", "aviation", "travel"]
+},
+
+"astronaut": {
+  "path": "assets/overlays/images/astronaut.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["astronaut", "space", "human"]
+},
+
+"aurora": {
+  "path": "assets/overlays/images/Auroras.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["aurora", "atmosphere", "magnetic field", "earth"]
+},
+
+"mars": {
+  "path": "assets/overlays/images/mars.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["mars", "planet", "space"]
+},
+
+"jupiter": {
+  "path": "assets/overlays/images/jupter.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["jupiter", "planet", "gas giant"]
+},
+
+"neptune": {
+  "path": "assets/overlays/images/neptune.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["neptune", "planet", "space"]
+},
+
+"solar_eclipse": {
+  "path": "assets/overlays/images/solar_eclipse.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["eclipse", "sun", "moon", "astronomy"]
+},
+
+"space_planet": {
+  "path": "assets/overlays/images/space_planet_1024.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["planet", "space", "astronomy"]
+},
+
+"conveyor": {
+  "path": "assets/overlays/images/conveyor_belt.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -110,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["process", "system", "automation"]
+},
+
+"robot_arm": {
+  "path": "assets/overlays/images/robot_arm.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -110,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["robot", "automation", "machine"]
+},
+
+"chemical_lab": {
+  "path": "assets/overlays/images/lab_chemical.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -110,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["chemistry", "reaction", "experiment"]
+},
+
+"ocean": {
+  "path": "assets/overlays/images/ocean_waves_aerial.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["ocean", "waves", "earth"]
+},
+
+"satellite_ground": {
+  "path": "assets/overlays/images/satellite_ground_receiver.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -110,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["satellite", "signal", "communication"]
+},
+
+"loading": {
+  "path": "assets/overlays/images/moblie_loading.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -90,
+  "scale": 0.4,
+  "z_index": 5,
+  "keywords": ["loading", "delay", "processing"]
+},
+
+"watch": {
+  "path": "assets/overlays/images/wrist_watch.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -100,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["time", "watch", "seconds"]
+},
+
+"exclamation": {
+  "path": "assets/overlays/images/exclamation_mark_on_a_sign.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -60,
+  "scale": 0.4,
+  "z_index": 10,
+  "keywords": ["warning", "attention", "alert"]
+},
+"satellite": {
+  "path": "assets/overlays/images/satellite_icon.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["satellite", "orbit", "space", "communication"]
+},
+
+"clock_alt": {
+  "path": "assets/overlays/images/clock.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["time", "clock", "seconds"]
+},
+
+"clock_icon": {
+  "path": "assets/overlays/images/clock_icon_1024.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["time", "clock", "icon"]
+},
+
+"earth_photo": {
+  "path": "assets/overlays/images/earth_image.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["earth", "planet", "photo"]
+},
+
+"earth_green": {
+  "path": "assets/overlays/images/earth_green_transparent_1024.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["earth", "planet", "green"]
+},
+
+"earth_sketch": {
+  "path": "assets/overlays/images/earth_blue_green_sketch_1024.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["earth", "planet", "sketch"]
+},
+
+"sunflower": {
+  "path": "assets/overlays/images/sunflower.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["nature", "flower", "sunlight"]
+},
+
+"pexels_misc": {
+  "path": "assets/overlays/images/pexels-zelch-12498804.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["abstract", "background", "visual"]
+},
+"avatar_thinking_3": {
+  "path": "assets/overlays/images/avatar_thinking_3_1024.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -40,
+  "scale": 0.4,
+  "z_index": 5,
+  "keywords": ["thinking", "realization"]
+},
+
+"avatar_thinking_4": {
+  "path": "assets/overlays/images/avatar_thinking_4_1024.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -40,
+  "scale": 0.4,
+  "z_index": 5,
+  "keywords": ["thinking", "realization", "subscribe"]
+},
+
+"avatar_thinking_5": {
+  "path": "assets/overlays/images/avatar_thinking_5_1024.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -40,
+  "scale": 0.4,
+  "z_index": 5,
+  "keywords": ["surprised", "shock"]
+},
+
+"brain_plate": {
+  "path": "assets/overlays/images/brain_on_plate.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -80,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["brain", "thinking", "overload"]
+},
+
+"human_wait": {
+  "path": "assets/overlays/images/man_showing_wait_hand.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -80,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["wait", "stop", "attention"]
+},
+
+"asian_wait": {
+  "path": "assets/overlays/images/asian_man_showing_wait_hand.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -80,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["wait", "pause", "attention"]
+},
+
+"doctor_wait": {
+  "path": "assets/overlays/images/doctor_saying_wait_hand.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -80,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["wait", "warning", "medical"]
+},
+
+"reading": {
+  "path": "assets/overlays/images/man_reading_a_book.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -90,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["reading", "learning", "knowledge"]
+},
+
+"sleeping": {
+  "path": "assets/overlays/images/man_sleeping.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -90,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["sleep", "rest", "fatigue"]
+},
+
+"cat_sleeping": {
+  "path": "assets/overlays/images/cat_sleeping.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -90,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["sleep", "rest", "cute"]
+},
+
+"skeleton_full": {
+  "path": "assets/overlays/images/skeleton.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -90,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["skeleton", "bones", "human body"]
+},
+
+"galaxy": {
+  "path": "assets/overlays/images/galaxy.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["galaxy", "space", "universe"]
+},
+
+"moon": {
+  "path": "assets/overlays/images/moon.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["moon", "orbit", "space"]
+},
+
+"sun": {
+  "path": "assets/overlays/images/sun.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["sun", "star", "heat"]
+},
+
+"solar_system": {
+  "path": "assets/overlays/images/solar_system.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["solar system", "planets", "orbit"]
+},
+
+"solar_system_line": {
+  "path": "assets/overlays/images/solar_system_one_line.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["solar system", "diagram", "orbit"]
+},
+
+"rocket_launch": {
+  "path": "assets/overlays/images/rocket_launched.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["rocket", "launch", "space"]
+},
+
+"volcano": {
+  "path": "assets/overlays/images/volcano_eruption.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["volcano", "eruption", "earth"]
+},
+
+"sunrise": {
+  "path": "assets/overlays/images/sun_rise_set.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["sunrise", "sunset", "time"]
+},
+
+"desert": {
+  "path": "assets/overlays/images/desert_sand.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["desert", "sand", "heat"]
+},
+
+"globe": {
+  "path": "assets/overlays/images/globe_on_a_table.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -120,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["globe", "earth", "world"]
+},
+
+"ai_chip": {
+  "path": "assets/overlays/images/ai_on_chip.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -100,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["ai", "chip", "technology"]
+},
+
+"electronic_chip": {
+  "path": "assets/overlays/images/electronic_chip.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -100,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["electronics", "chip", "hardware"]
+},
+
+"datagram": {
+  "path": "assets/overlays/images/datagram.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -100,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["data", "network", "packets"]
+},
+
+"data_report": {
+  "path": "assets/overlays/images/data_report.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -100,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["data", "report", "analysis"]
+},
+
+"gps": {
+  "path": "assets/overlays/images/gps_icon.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -100,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["gps", "location", "navigation"]
+},
+
+"internet": {
+  "path": "assets/overlays/images/internet_globe.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -100,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["internet", "network", "global"]
+},
+
+"hourglass": {
+  "path": "assets/overlays/images/hour_glass.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -110,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["time", "process", "waiting"]
+},
+
+"stopwatch": {
+  "path": "assets/overlays/images/stopwatch.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -110,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["time", "speed", "measurement"]
+},
+
+"server": {
+  "path": "assets/overlays/images/server_room.jpg",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -100,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["server", "data", "infrastructure"]
+},
+
+"science_book": {
+  "path": "assets/overlays/images/science_book_school_1024.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -100,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["science", "education", "knowledge"]
+},
+
+"science_book_open": {
+  "path": "assets/overlays/images/science_open_book_school_1024.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -100,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["science", "learning", "open book"]
+},
+
+"science_book_open_transparent": {
+  "path": "assets/overlays/images/science_open_book_school_transparent_1024.png",
+  "type": "image",
+  "anchor": "top_center",
+  "y_offset": -100,
+  "scale": 0.45,
+  "z_index": 5,
+  "keywords": ["science", "learning", "transparent"]
+}
+
+
+  },
+
+  "gameplay": {
+    "subway": {
+      "path": "assets/gameplay/subway.mp4",
+      "energy": "high",
+      "best_for": ["fast facts", "brainrot", "shock"]
+    },
+    "minecraft": {
+      "path": "assets/gameplay/minecraft.mp4",
+      "energy": "medium",
+      "best_for": ["explainer", "chill facts"]
+    },
+    "gtaramp": {
+      "path": "assets/gameplay/gtaramp.mp4",
+      "energy": "very_high",
+      "best_for": ["crazy facts", "extreme hooks"]
+    }
+  }
+}
+----------------------------------------------------------------------------------
+generate_batch.py
+----------------------------------------------
+import os
+import subprocess
+import json
+from datetime import datetime
+import sys
+import io
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8")
+
+VIDEOS_DIR = "videos"
+IDEAS_FILE = "ideas.json"
+
+def load_ideas():
+    with open(IDEAS_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_ideas(data):
+    with open(IDEAS_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+
+def get_next_video_id():
+    os.makedirs(VIDEOS_DIR, exist_ok=True)
+    existing = [d for d in os.listdir(VIDEOS_DIR) if d.startswith("video_")]
+
+    if not existing:
+        return 1
+
+    nums = [int(d.split("_")[1]) for d in existing if d.split("_")[1].isdigit()]
+    return max(nums) + 1
+
+def build_script_text(script_obj):
+    return (
+        f"{script_obj['hook']} "
+        f"{script_obj['beat']} "
+        f"{script_obj['lore']} "
+        f"{script_obj['cta']}"
+    )
+
+def get_next_pending_idea_key(ideas):
+    for key, idea in ideas.items():
+        if idea.get("status") == "pending":
+            return key
+    return None
+
+def create_video_job(video_index, idea_key):
+    video_id = f"video_{video_index:03d}"
+    base_path = os.path.join(VIDEOS_DIR, video_id)
+
+    input_dir = os.path.join(base_path, "input")
+    intermediate_dir = os.path.join(base_path, "intermediate")
+    output_dir = os.path.join(base_path, "output")
+
+    os.makedirs(input_dir, exist_ok=True)
+    os.makedirs(intermediate_dir, exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
+
+    print(f"\n🎬 Creating {video_id} from {idea_key}")
+
+    ideas = load_ideas()
+    idea = ideas[idea_key]
+
+    frozen_idea_path = os.path.join(input_dir, "idea.json")
+    with open(frozen_idea_path, "w", encoding="utf-8") as f:
+        json.dump({idea_key: idea}, f, indent=2)
+
+    print("🧊 Frozen idea snapshot:", frozen_idea_path)
+
+    # Script
+    script_text = build_script_text(idea["script"])
+    script_path = os.path.join(input_dir, "script.txt")
+
+    with open(script_path, "w", encoding="utf-8") as f:
+        f.write(script_text)
+
+    # TTS
+    subprocess.run(
+        [sys.executable, "scripts/narrate_google.py", script_path, intermediate_dir],
+        check=True
+    )
+
+    narration_path = os.path.join(intermediate_dir, "narration.wav")
+
+    # Whisper
+    words_json = os.path.join(intermediate_dir, "words.json")
+    subprocess.run(
+        [sys.executable, "alignment/whisper_align.py", narration_path, words_json],
+        check=True
+    )
+
+    # Segments
+    segments_json = os.path.join(intermediate_dir, "segment_timeline.json")
+    subprocess.run(
+        [sys.executable, "alignment/segment_mapper.py",
+         words_json, frozen_idea_path, segments_json],
+        check=True
+    )
+
+    # Captions
+    blocks_json = os.path.join(intermediate_dir, "word_blocks.json")
+    subprocess.run(
+        [sys.executable, "captions/build_word_blocks.py",
+         words_json, frozen_idea_path, idea_key, blocks_json],
+        check=True
+    )
+
+    # Audio
+    final_audio = os.path.join(output_dir, "audio.wav")
+    subprocess.run(
+        [sys.executable, "audio/audio_post.py",
+         narration_path, words_json, segments_json,
+         frozen_idea_path, final_audio],
+        check=True
+    )
+
+    # Video
+    final_video = os.path.join(output_dir, "video.mp4")
+    subprocess.run(
+        [sys.executable, "render/render.py",
+         final_audio, blocks_json, final_video, idea_key],
+        check=True
+    )
+
+    # Upload
+    title = idea["youtube"]["title"]
+    description = idea["youtube"]["description"]
+    tags = ",".join(idea["youtube"]["tags"])
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/youtube_uploader.py",
+            final_video,
+            title,
+            description,
+            tags
+        ]
+    )
+
+    if result.returncode == 99:
+        print("⏸ Batch stopped due to YouTube upload limit.")
+        print("🛑 Idea NOT marked rendered. Resume later.")
+        sys.exit(0)
+
+    if result.returncode != 0:
+        raise RuntimeError("❌ Upload failed unexpectedly.")
+
+    # Update ideas.json
+    ideas = load_ideas()
+    ideas[idea_key]["status"] = "rendered"
+    ideas[idea_key]["log"]["rendered_at"] = datetime.now().isoformat()
+    ideas[idea_key]["log"]["video_path"] = final_video
+    save_ideas(ideas)
+
+    print(f"✅ {video_id} completed and {idea_key} uploaded + scheduled")
+
+def generate_batch(count=1):
+    ideas = load_ideas()
+    start_id = get_next_video_id()
+
+    for i in range(count):
+        idea_key = get_next_pending_idea_key(ideas)
+
+        if not idea_key:
+            print("🚫 No pending ideas left")
+            return
+
+        create_video_job(start_id + i, idea_key)
+
+        # Mark consumed in memory
+        ideas[idea_key]["status"] = "rendered"
+
+if __name__ == "__main__":
+    count = int(sys.argv[1]) if len(sys.argv) > 1 else 1
+    generate_batch(count)
+
+----------------------------------------------------------------------------------
+scripts/narrate_google.py
+----------------------------------------------
+import sys
+import os
+import re
+from google.cloud import texttospeech
+
+# ---------- USAGE ----------
+# python narrate_google.py <script_path> <job_intermediate_dir>
+
+if len(sys.argv) < 3:
+    print("Usage: python narrate_google.py <script_path> <job_intermediate_dir>")
+    sys.exit(1)
+
+SCRIPT_PATH = sys.argv[1]
+JOB_DIR = sys.argv[2]
+
+FINAL_AUDIO = os.path.join(JOB_DIR, "narration.wav")
+os.makedirs(JOB_DIR, exist_ok=True)
+
+# ---------- LOAD SCRIPT ----------
+with open(SCRIPT_PATH, "r", encoding="utf-8") as f:
+    text = f.read().strip()
+
+# ---------- CHANNEL NAME PRONUNCIATION FIX ----------
+# Convert Fact4Sigma → Fact for Sigma (TTS-friendly)
+text = re.sub(r"\bFact4Sigma\b", "Fact for Sigma", text, flags=re.IGNORECASE)
+
+print("🎙 Using Google Cloud TTS")
+
+# ---------- INIT CLIENT ----------
+client = texttospeech.TextToSpeechClient()
+
+# ---------- BUILD VOICE ----------
+voice = texttospeech.VoiceSelectionParams(
+    language_code="en-US",
+    name="en-US-Standard-D"
+)
+
+# ---------- AUDIO CONFIG ----------
+audio_config = texttospeech.AudioConfig(
+    audio_encoding=texttospeech.AudioEncoding.LINEAR16,
+    speaking_rate=1.0,
+    pitch=0.5,
+    volume_gain_db=2.0
+)
+
+# ---------- INPUT ----------
+synthesis_input = texttospeech.SynthesisInput(text=text)
+
+MAX_CHARS = 3000
+if len(text) > MAX_CHARS:
+    raise RuntimeError(f"❌ Script too long: {len(text)} chars (limit {MAX_CHARS})")
+
+# ---------- CALL API ----------
+response = client.synthesize_speech(
+    input=synthesis_input,
+    voice=voice,
+    audio_config=audio_config
+)
+
+# ---------- SAVE ----------
+with open(FINAL_AUDIO, "wb") as out:
+    out.write(response.audio_content)
+
+print(f"✅ Narration built: {FINAL_AUDIO}")
+
+----------------------------------------------------------------------------------
+whisper_align.py
+----------------------------------------------
+import sys
+import json
+import whisper
+import string
+
+if len(sys.argv) < 3:
+    print("Usage: python whisper_align.py <input_wav> <output_json>")
+    sys.exit(1)
+
+audio_path = sys.argv[1]
+output_path = sys.argv[2]
+
+print("🎧 Loading Whisper model...")
+model = whisper.load_model("base")
+
+print("🕒 Running alignment...")
+result = model.transcribe(audio_path, word_timestamps=True)
+
+raw_words = []
+for segment in result["segments"]:
+    for w in segment["words"]:
+        raw_words.append({
+            "word": w["word"],
+            "start": round(w["start"], 3),
+            "end": round(w["end"], 3)
+        })
+
+def normalize_token(token):
+    return token.strip().lower().translate(str.maketrans("", "", string.punctuation))
+
+words = []
+i = 0
+
+while i < len(raw_words):
+    w1 = raw_words[i]
+    t1 = normalize_token(w1["word"])
+
+    # Look ahead for "fact for sigma" or "fact four sigma"
+    if i + 2 < len(raw_words):
+        w2 = raw_words[i + 1]
+        w3 = raw_words[i + 2]
+
+        t2 = normalize_token(w2["word"])
+        t3 = normalize_token(w3["word"])
+
+        if t1 == "fact" and t2 in ("for", "four") and t3 == "sigma":
+            words.append({
+                "word": "FACT4SIGMA",
+                "start": w1["start"],
+                "end": w3["end"]
+            })
+            i += 3
+            continue
+
+    # Default: pass through original word
+    words.append({
+        "word": w1["word"],
+        "start": w1["start"],
+        "end": w1["end"]
+    })
+    i += 1
+
+with open(output_path, "w", encoding="utf-8") as f:
+    json.dump(words, f, indent=2)
+
+print(f"✅ Word alignment written to: {output_path}")
+
+
+----------------------------------------------------------------------------------
+alignment/segment_mapper.py
+----------------------------------------------
+import sys
+import json
+import re
+
+# ---------------- NORMALIZATION ----------------
+
+def normalize_token(token: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", token.lower())
+
+STOPWORDS = {
+    "the", "a", "an", "and", "or", "but",
+    "is", "are", "was", "were", "be",
+    "to", "of", "in", "on", "for", "with",
+    "there", "this", "that", "it",
+    "you", "we", "they", "i",
+    "do", "does", "did", "not"
+}
+
+def is_strong(token: str) -> bool:
+    return token and token not in STOPWORDS
+
+# ---------------- ARGUMENTS ----------------
+
+if len(sys.argv) < 4:
+    print("Usage: python segment_mapper.py <words.json> <idea.json> <output.json>")
+    sys.exit(1)
+
+WORDS_PATH = sys.argv[1]
+IDEA_PATH = sys.argv[2]
+OUTPUT_PATH = sys.argv[3]
+
+# ---------------- LOAD INPUTS ----------------
+
+with open(WORDS_PATH, "r", encoding="utf-8") as f:
+    raw_whisper_words = json.load(f)
+
+with open(IDEA_PATH, "r", encoding="utf-8") as f:
+    ideas = json.load(f)
+
+# 🔒 SINGLE IDEA (FROZEN)
+idea = next(iter(ideas.values()))
+
+script = idea["script"]
+
+segments = [
+    ("hook", script["hook"]),
+    ("beat", script["beat"]),
+    ("lore", script["lore"]),
+    ("cta", script["cta"]),
+]
+
+# ---------------- NORMALIZE WHISPER ----------------
+
+whisper_seq = []
+for w in raw_whisper_words:
+    token = normalize_token(w["word"])
+    if token:
+        whisper_seq.append({
+            "word": token,
+            "start": w["start"],
+            "end": w["end"],
+        })
+
+if not whisper_seq:
+    raise RuntimeError("No usable Whisper words")
+
+# ---------------- ALIGN SEGMENTS ----------------
+
+cursor = 0
+timeline = {}
+
+for idx, (name, text) in enumerate(segments):
+    raw_tokens = [normalize_token(t) for t in text.split()]
+    tokens = [t for t in raw_tokens if is_strong(t)]
+
+    matched_times = []
+
+    for token in tokens:
+        while cursor < len(whisper_seq):
+            w = whisper_seq[cursor]
+            if w["word"] == token:
+                matched_times.append((w["start"], w["end"]))
+                cursor += 1
+                break
+            cursor += 1
+
+    if len(matched_times) >= 2:
+        start_time = matched_times[0][0]
+        end_time = matched_times[-1][1]
+
+    elif len(matched_times) == 1:
+        center_start, center_end = matched_times[0]
+        start_time = max(0, center_start - 0.35)
+        end_time = center_end + 0.35
+
+    else:
+        if idx > 0:
+            start_time = timeline[segments[idx - 1][0]]["end"]
+        else:
+            start_time = whisper_seq[0]["start"]
+
+        if idx + 1 < len(segments):
+            end_time = whisper_seq[min(len(whisper_seq) - 1, cursor)]["end"]
+        else:
+            end_time = whisper_seq[-1]["end"]
+
+    timeline[name] = {
+        "start": round(start_time, 3),
+        "end": round(end_time, 3),
+    }
+
+# ---------------- WRITE OUTPUT ----------------
+
+with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
+    json.dump({"segments": timeline}, f, indent=2)
+
+print("✅ Segment timeline built:")
+for k, v in timeline.items():
+    print(f"  {k}: {v['start']} → {v['end']}")
+
+
+----------------------------------------------------------------------------------
+captions/build_word_blocks.py
+----------------------------------------------
+import json
+import os
+import sys
+
+if len(sys.argv) < 5:
+    print("Usage: python build_word_blocks.py <words.json> <ideas.json> <idea_key> <output.json>")
+    sys.exit(1)
+
+WORDS_PATH = sys.argv[1]
+IDEAS_PATH = sys.argv[2]
+IDEA_KEY = sys.argv[3]
+OUTPUT_PATH = sys.argv[4]
+
+MAX_WORDS = 3
+MAX_DURATION = 0.8
+PAUSE_THRESHOLD = 0.18
+MAX_CHARS = 18
+
+# ---------------- HELPERS ----------------
+
+def normalize(w: str) -> str:
+    return w.strip().lower().strip(".,!?\"'")
+
+# ---------------- LOAD INPUTS ----------------
+
+with open(WORDS_PATH, "r", encoding="utf-8") as f:
+    words = json.load(f)
+
+with open(IDEAS_PATH, "r", encoding="utf-8") as f:
+    ideas = json.load(f)
+
+idea = ideas.get(IDEA_KEY)
+if not idea:
+    raise RuntimeError(f"Idea key not found: {IDEA_KEY}")
+
+captions_cfg = idea.get("captions", {})
+emphasis_cfg = captions_cfg.get("emphasis", {}) if captions_cfg.get("highlight_emphasis") else {}
+
+EMPHASIS_WORDS = {normalize(w) for w in emphasis_cfg.keys()}
+print("🎨 Emphasis source words:", EMPHASIS_WORDS)
+
+# ---------------- BUILD BLOCKS ----------------
+
+blocks = []
+current = []
+block_start = None
+prev_end = None
+
+def flush(end_time):
+    global current, block_start
+    if not current:
+        return
+
+    blocks.append({
+        "words": current.copy(),
+        "start": round(block_start, 3),
+        "end": round(end_time, 3)
+    })
+
+    current.clear()
+    block_start = None
+
+for w in words:
+    raw_word = w["word"]
+    start = w["start"]
+    end = w["end"]
+
+    if block_start is None:
+        block_start = start
+
+    if prev_end is not None:
+        gap = start - prev_end
+        if gap >= PAUSE_THRESHOLD and current:
+            flush(prev_end)
+            block_start = start
+
+    token = normalize(raw_word)
+    is_emphasis = token in EMPHASIS_WORDS
+
+    current.append({
+        "text": raw_word,
+        "emphasis": is_emphasis
+    })
+
+    if is_emphasis:
+        print(f"⭐ Emphasis matched: '{raw_word.strip()}' at {start:.2f}s")
+
+    text_len = sum(len(x["text"]) for x in current) + len(current) - 1
+    duration = end - block_start
+
+    if (
+        text_len > MAX_CHARS or
+        duration >= MAX_DURATION or
+        len(current) >= MAX_WORDS
+    ):
+        flush(end)
+
+    prev_end = end
+
+if current:
+    flush(prev_end)
+
+# ---------------- WRITE OUTPUT ----------------
+
+os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
+
+with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
+    json.dump(blocks, f, indent=2)
+
+print(f"✅ Generated {len(blocks)} caption blocks → {OUTPUT_PATH}")
+
+
+----------------------------------------------------------------------------------
+audio/audio_post.py
+----------------------------------------------
+from pydub import AudioSegment
+import json
+import sys
+import os
+import string
+
+ASSET_REGISTRY = "assets_registry.json"
+
+# ------------------- HELPERS -------------------
+
+def load_json(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def normalize_word(w):
+    return w.strip().lower().translate(str.maketrans("", "", string.punctuation))
+
+def find_word_time(words, target):
+    target = normalize_word(target)
+    for w in words:
+        if normalize_word(w["word"]) == target:
+            return w["start"]
+    return None
+
+def find_segment_time(segment_timeline, name):
+    name = name.lower()
+    segment = segment_timeline.get(name)
+    if not segment:
+        return None
+    return segment["start"]
+
+# ------------------- CORE ENGINE -------------------
+
+def apply_music(narration, music_cfg, registry):
+    music_id = music_cfg["asset"]
+    music_asset = registry["music"].get(music_id)
+
+    if not music_asset:
+        print("⚠️ Music not found in registry:", music_id)
+        return narration
+
+    music = AudioSegment.from_file(music_asset["path"])
+    loops = int(len(narration) / len(music)) + 1
+    music = (music * loops)[:len(narration)]
+
+    volume = music_cfg.get("overrides", {}).get(
+        "volume", music_asset.get("default_volume", -10)
+    )
+    music = music + volume
+
+    if music_asset.get("duck_under_voice", False):
+        music = music - 10
+
+    return narration.overlay(music)
+
+def apply_sfx(base_audio, sfx_list, words, segment_timeline, registry):
+    for sfx in sfx_list:
+        sfx_id = sfx["asset"]
+        sfx_asset = registry["sfx"].get(sfx_id)
+
+        if not sfx_asset:
+            print("⚠️ Missing SFX in registry:", sfx_id)
+            continue
+
+        sound = AudioSegment.from_file(sfx_asset["path"])
+        volume = sfx.get("overrides", {}).get(
+            "volume", sfx_asset.get("default_volume", 0)
+        )
+        sound = sound + volume
+
+        start_time = None
+
+        if "at_word" in sfx:
+            start_time = find_word_time(words, sfx["at_word"])
+        elif "at_segment" in sfx:
+            start_time = find_segment_time(segment_timeline, sfx["at_segment"])
+        elif "start" in sfx:
+            start_time = sfx["start"]
+
+        if start_time is None:
+            continue
+
+        base_audio = base_audio.overlay(
+            sound,
+            position=int(start_time * 1000)
+        )
+
+    return base_audio
+
+# ------------------- PIPELINE -------------------
+
+def render_audio_with_idea(input_audio, words_json, segments_json, idea_json_path, output_audio):
+    print("🎧 Loading narration...")
+    narration = AudioSegment.from_file(input_audio)
+
+    print("📚 Loading asset registry...")
+    registry = load_json(ASSET_REGISTRY)
+
+    print("📖 Loading frozen idea...")
+    idea_blob = load_json(idea_json_path)
+    idea_key = list(idea_blob.keys())[0]
+    idea = idea_blob[idea_key]
+
+    print("🕒 Loading alignment data...")
+    words = load_json(words_json)
+
+    print("🧭 Loading segment timeline...")
+    segment_data = load_json(segments_json)
+    segment_timeline = segment_data.get("segments", {})
+
+    audio_cfg = idea.get("audio", {})
+
+    if "music" in audio_cfg:
+        print("🎵 Applying music:", audio_cfg["music"]["asset"])
+        narration = apply_music(narration, audio_cfg["music"], registry)
+
+    if "sfx" in audio_cfg:
+        print("🔊 Applying SFX...")
+        narration = apply_sfx(
+            narration,
+            audio_cfg["sfx"],
+            words,
+            segment_timeline,
+            registry
+        )
+
+    print("💾 Exporting final audio...")
+    os.makedirs(os.path.dirname(output_audio), exist_ok=True)
+    narration.export(
+        output_audio,
+        format="wav",
+        parameters=["-ar", "48000", "-ac", "2"]
+    )
+
+    print("✅ Final audio written to:", output_audio)
+
+# ------------------- ENTRY -------------------
+
+if __name__ == "__main__":
+    if len(sys.argv) < 6:
+        print("Usage: python audio_post.py <input_audio> <words_json> <segments_json> <idea_json> <output_audio>")
+        sys.exit(1)
+
+    render_audio_with_idea(
+        sys.argv[1],
+        sys.argv[2],
+        sys.argv[3],
+        sys.argv[4],
+        sys.argv[5]
+    )
+
+
+----------------------------------------------------------------------------------
+render/render.py
+----------------------------------------------
+import os
+import json
+import sys
+import random
+
+import numpy as np
+from PIL import Image, ImageDraw, ImageFont
+
+from moviepy import (
+    VideoFileClip,
+    AudioFileClip,
+    CompositeVideoClip,
+    ImageClip,
+)
+
+from overlay_engine import build_overlay_clips
+
+# ---------------- CONFIG ----------------
+WIDTH = 1080
+HEIGHT = 1920
+FPS = 30
+
+FONT_PATH = "assets/fonts/KOMIKAX_.ttf"
+FONT_SIZE = 96
+
+TEXT_COLOR = "#FFFFFF"
+EMPHASIS_COLOR = "#FFD54F"
+STROKE_COLOR = "#000000"
+STROKE_WIDTH = 4
+
+PAD_X = 40
+PAD_Y = 40
+SAFE_TEXT_WIDTH = int(WIDTH * 0.92)
+
+# ---------------- HELPERS ----------------
+
+def load_json(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def load_blocks(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def get_video_duration(path):
+    clip = VideoFileClip(path)
+    dur = clip.duration
+    clip.close()
+    return dur
+
+# ---------------- CAPTION CLIP ----------------
+
+def make_caption_clip(words, start, end, do_pop):
+    font = ImageFont.truetype(FONT_PATH, FONT_SIZE)
+
+    dummy = Image.new("RGBA", (10, 10))
+    d = ImageDraw.Draw(dummy)
+
+    full_line = " ".join(w["text"] for w in words)
+    bbox = d.textbbox((0, 0), full_line, font=font, stroke_width=STROKE_WIDTH)
+
+    text_w = bbox[2] - bbox[0]
+    text_h = bbox[3] - bbox[1]
+
+    img = Image.new(
+        "RGBA",
+        (text_w + PAD_X * 2, text_h + PAD_Y * 2),
+        (0, 0, 0, 0),
+    )
+
+    draw = ImageDraw.Draw(img)
+
+    x = PAD_X
+    y = PAD_Y
+
+    for token in words:
+        word = token["text"]
+        is_emph = token.get("emphasis", False)
+        color = EMPHASIS_COLOR if is_emph else TEXT_COLOR
+
+        draw.text(
+            (x, y),
+            word + " ",
+            font=font,
+            fill=color,
+            stroke_fill=STROKE_COLOR,
+            stroke_width=STROKE_WIDTH,
+        )
+
+        x += font.getlength(word + " ")
+
+    clip = ImageClip(np.array(img))
+
+    if clip.w > SAFE_TEXT_WIDTH:
+        clip = clip.resized(SAFE_TEXT_WIDTH / clip.w)
+
+    clip = clip.with_position(("center", HEIGHT // 2))
+
+    if do_pop:
+        clip = clip.resized(lambda t: 0.85 + min(t / 0.15, 1) * 0.15)
+
+    return clip.with_start(start).with_end(end)
+
+# ---------------- RENDER ----------------
+
+def render_video(audio_path, captions_path, output_path, idea_key):
+    print("🎞 Rendering video with MoviePy...")
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+    blocks = load_blocks(captions_path)
+
+    audio = AudioFileClip(audio_path)
+    audio_duration = audio.duration
+
+    # ---- LOAD FROZEN IDEA ----
+    base_dir = os.path.dirname(os.path.dirname(captions_path))
+    frozen_idea_path = os.path.join(base_dir, "input", "idea.json")
+    idea_data = load_json(frozen_idea_path)
+    idea = idea_data[idea_key]
+
+    gameplay_path = idea["video"]["gameplay"]
+
+    if not os.path.exists(gameplay_path):
+        raise FileNotFoundError(f"❌ Gameplay file not found: {gameplay_path}")
+
+    # ---- LOAD GAMEPLAY VIDEO ----
+    video_duration = get_video_duration(gameplay_path)
+    start_time = random.uniform(0, max(0, video_duration - audio_duration))
+
+    base_video = (
+        VideoFileClip(gameplay_path)
+        .subclipped(start_time, start_time + audio_duration)
+        .resized((WIDTH, HEIGHT))
+        .with_fps(FPS)
+        .with_audio(audio)
+    )
+
+    # ---------------- CAPTIONS ----------------
+    caption_clips = []
+    prev_end = None
+
+    for block in blocks:
+        start = float(block["start"])
+        end = float(block["end"])
+        words = block["words"]
+
+        do_pop = not (prev_end and start - prev_end < 0.30)
+
+        caption_clips.append(make_caption_clip(words, start, end, do_pop))
+        prev_end = end
+
+    # ---------------- OVERLAYS ----------------
+    segment_timeline_path = os.path.join(base_dir, "intermediate", "segment_timeline.json")
+
+    overlay_clips = build_overlay_clips(
+        word_blocks_path=captions_path,
+        segment_timeline_path=segment_timeline_path,
+        ideas_path=frozen_idea_path,
+        assets_registry_path="assets_registry.json",
+        idea_key=idea_key,
+    )
+
+    # ---------------- COMPOSE ----------------
+    final = CompositeVideoClip(
+        [base_video] + overlay_clips + caption_clips,
+        size=(WIDTH, HEIGHT),
+    )
+
+    final.write_videofile(
+        output_path,
+        fps=FPS,
+        bitrate="20000k",
+        codec="libx264",
+        audio_codec="aac",
+        preset="slow",
+        threads=4,
+        ffmpeg_params=[
+            "-pix_fmt", "yuv420p",
+            "-profile:v", "high",
+            "-level", "4.2",
+            "-movflags", "+faststart"
+        ]
+    )
+
+    final.close()
+    audio.close()
+    print("✅ Video rendered:", output_path)
+
+# ---------------- ENTRY ----------------
+
+if __name__ == "__main__":
+    if len(sys.argv) != 5:
+        print("Usage: python render.py <audio> <captions> <output> <idea_key>")
+        sys.exit(1)
+
+    audio_path = sys.argv[1]
+    captions_path = sys.argv[2]
+    output_path = sys.argv[3]
+    idea_key = sys.argv[4]
+
+    render_video(audio_path, captions_path, output_path, idea_key)
+
+----------------------------------------------------------------------------------
+scripts/youtube_uploader.py
+----------------------------------------------
+import os
+import sys
+import json
+from datetime import datetime, timedelta, timezone
+
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+
+SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
+
+CLIENT_SECRETS_FILE = "secrets/client_secret_59832856895-qg9apdakn6ajbslhk9a8bfmh59gj4brv.apps.googleusercontent.com.json"
+TOKEN_FILE = "secrets/token.json"
+QUEUE_FILE = "upload_queue.json"
+
+UPLOAD_GAP_HOURS = 8
+
+# ---------------- QUEUE ----------------
+
+def load_queue():
+    if not os.path.exists(QUEUE_FILE):
+        return {"last_scheduled_time": None, "queue": []}
+
+    with open(QUEUE_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_queue(data):
+    with open(QUEUE_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+
+def get_next_schedule_time():
+    now = datetime.now(timezone.utc)
+    queue = load_queue()
+
+    if queue["last_scheduled_time"]:
+        last = datetime.fromisoformat(queue["last_scheduled_time"])
+        next_time = last + timedelta(hours=UPLOAD_GAP_HOURS)
+
+        if next_time > now:
+            return next_time
+
+    return now
+
+def update_queue(video_path, scheduled_time, youtube_id):
+    queue = load_queue()
+
+    queue["last_scheduled_time"] = scheduled_time.isoformat()
+    queue["queue"].append({
+        "video_path": video_path,
+        "scheduled_time": scheduled_time.isoformat(),
+        "youtube_id": youtube_id
+    })
+
+    save_queue(queue)
+
+# ---------------- AUTH ----------------
+
+def get_authenticated_service():
+    creds = None
+
+    if os.path.exists(TOKEN_FILE):
+        creds = Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
+
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                CLIENT_SECRETS_FILE, SCOPES
+            )
+            creds = flow.run_local_server(port=0)
+
+        with open(TOKEN_FILE, "w") as token:
+            token.write(creds.to_json())
+
+    return build("youtube", "v3", credentials=creds)
+
+# ---------------- UPLOAD ----------------
+
+def upload_and_schedule(video_path, title, description, tags):
+    if not os.path.exists(video_path):
+        raise FileNotFoundError(f"❌ Video file not found: {video_path}")
+
+    youtube = get_authenticated_service()
+
+    scheduled_time = get_next_schedule_time()
+    publish_at = scheduled_time.isoformat().replace("+00:00", "Z")
+
+    print("📅 Scheduled time:", scheduled_time.isoformat())
+
+    body = {
+        "snippet": {
+            "title": title,
+            "description": description,
+            "tags": tags,
+            "categoryId": "27"
+        },
+        "status": {
+            "privacyStatus": "private",
+            "publishAt": publish_at,
+            "selfDeclaredMadeForKids": False
+        }
+    }
+
+    media = MediaFileUpload(video_path, chunksize=-1, resumable=True)
+
+    request = youtube.videos().insert(
+        part="snippet,status",
+        body=body,
+        media_body=media
+    )
+
+    response = None
+    try:
+        while response is None:
+            status, response = request.next_chunk()
+            if status:
+                print(f"📤 Uploading: {int(status.progress() * 100)}%")
+
+    except Exception as e:
+        msg = str(e)
+
+        if "uploadLimitExceeded" in msg or "exceeded the number of videos" in msg:
+            print("🚫 YouTube upload limit reached.")
+            print("⏸ Stopping batch safely.")
+            sys.exit(99)
+
+        raise
+
+    youtube_id = response["id"]
+
+    update_queue(video_path, scheduled_time, youtube_id)
+
+    print("✅ Uploaded + scheduled")
+    print("🆔 Video ID:", youtube_id)
+    print("🕒 Scheduled for:", scheduled_time.isoformat())
+
+    return youtube_id
+
+
+# ---------------- ENTRY ----------------
+
+if __name__ == "__main__":
+    if len(sys.argv) < 5:
+        print("Usage: python youtube_uploader.py <video.mp4> <title> <description> <tags_csv>")
+        sys.exit(1)
+
+    video_path = sys.argv[1]
+    title = sys.argv[2]
+    description = sys.argv[3]
+    tags = [t.strip() for t in sys.argv[4].split(",")]
+
+    upload_and_schedule(video_path, title, description, tags)
+-------------------------------------------------------------------------------------------------------------
+File Structure 
+-------------------------------------------------------------------------------------------------------------
+
+PS C:\Users\vgaur\Desktop\shorts-bot> tree /F
+Folder PATH listing for volume Windows
+Volume serial number is E26E-0A81
+C:.
+│   .gitattributes
+│   .gitignore
+│   assets_registry.json
+│   generate_batch.py
+│   ideas.json
+│   PROJECT_VERSION.md
+│   recipe_audio.json
+│   REQUIREMENTS.md
+│   SHORTS_BOT_PLAN.md
+│   upload_queue.json
+│
+├───alignment
+│       segment_mapper.py
+│       whisper_align.py
+│       words.json
+│
+├───assets
+│   ├───fonts
+│   │       KOMIKAX_.ttf
+│   │
+│   ├───gameplay
+│   │       gtaramp.mp4
+│   │       minecraft.mp4
+│   │       subway.mp4
+│   │
+│   ├───music
+│   │       All In - Everet Almond.mp3
+│   │       bg_loop_01.MP3
+│   │       Boomin' - Dan _Lebo_ Lebowitz, Tone Seeker.mp3
+│   │       Conspiracy Theory - Rod Kim.mp3
+│   │       copyright-free-background-music-for-advertising-289907.mp3
+│   │       Echo Sax End -  [Looped] - by Caleb Arredondo - Caleb Arredondo.mp3
+│   │       F16 - The Grey Room _ Golden Palms.mp3
+│   │       Faszo - Mini Vandals.mp3
+│   │       Feeling Blue - Caleb Arredondo.mp3
+│   │       Van Life Rager - Everet Almond.mp3
+│   │       You Should - Patrick Patrikios.mp3
+│   │
+│   ├───overlays
+│   │   └───images
+│   │           airplane.jpg
+│   │           ai_on_chip.png
+│   │           asian_man_showing_wait_hand.jpg
+│   │           astronaut.jpg
+│   │           atom_icon_1024.png
+│   │           Auroras.jpg
+│   │           avatar_thinking_1_1024.png
+│   │           avatar_thinking_2_1024.png
+│   │           avatar_thinking_3_1024.png
+│   │           avatar_thinking_4_1024.png
+│   │           avatar_thinking_5_1024.png
+│   │           brain_1024.png
+│   │           brain_inside_head_think_mentality_brain_1024.png
+│   │           brain_on_plate.jpg
+│   │           cat_sleeping.jpg
+│   │           chess.jpg
+│   │           clock.jpg
+│   │           clock_1024.png
+│   │           clock_icon_1024.png
+│   │           conveyor_belt.jpg
+│   │           datagram.png
+│   │           data_report.png
+│   │           desert_sand.jpg
+│   │           doctor_saying_wait_hand.jpg
+│   │           earth_blue_1024.png
+│   │           earth_blue_green_sketch_1024.png
+│   │           earth_green_transparent_1024.png
+│   │           earth_image.jpg
+│   │           electronic_chip.png
+│   │           exclamation_mark_on_a_sign.jpg
+│   │           eye_1024.png
+│   │           fire_1024.png
+│   │           galaxy.jpg
+│   │           globe_on_a_table.jpg
+│   │           gps_icon.png
+│   │           hour_glass.jpg
+│   │           internet_globe.png
+│   │           jupter.jpg
+│   │           lab_chemical.jpg
+│   │           lightning_1024.png
+│   │           lightning_storm.jpg
+│   │           lock-closed_1024.png
+│   │           lock_open_1024.png
+│   │           man_reading_a_book.jpg
+│   │           man_showing_wait_hand.jpg
+│   │           man_sleeping.jpg
+│   │           mars.jpg
+│   │           mind_open_1024.png
+│   │           moblie_loading.jpg
+│   │           moon.jpg
+│   │           neptune.jpg
+│   │           ocean_waves_aerial.jpg
+│   │           pexels-zelch-12498804.jpg
+│   │           question_mark_1024.png
+│   │           robot_arm.jpg
+│   │           rocket_1024.png
+│   │           rocket_launched.jpg
+│   │           satellite_ground_receiver.png
+│   │           satellite_icon.png
+│   │           science_book_school_1024.png
+│   │           science_open_book_school_1024.png
+│   │           science_open_book_school_transparent_1024.png
+│   │           server_room.jpg
+│   │           skeleton.jpg
+│   │           skull_1024.png
+│   │           solar_eclipse.jpg
+│   │           solar_system.jpg
+│   │           solar_system_one_line.jpg
+│   │           space_planet_1024.png
+│   │           stopwatch.jpg
+│   │           subscribe_icon_1024.png
+│   │           sun.jpg
+│   │           sunflower.jpg
+│   │           sun_rise_set.jpg
+│   │           volcano_eruption.jpg
+│   │           warning_black_1024.png
+│   │           wrist_watch.jpg
+│   │
+│   └───sfx
+│           bass-impact-327529.mp3
+│           digital-glitch-noise-hd-379465.mp3
+│           ding-101492.mp3
+│           error-126627.mp3
+│           glitch-sfx-312910.mp3
+│           impact-cinematic-boom-05-352465.mp3
+│           minecraft_damage.mp3
+│           notification-457196.mp3
+│           riser.MP3
+│           simple-whoosh-382724.mp3
+│           whoosh-effect-382717.mp3
+│           windows-error-sound-effect-35894.mp3
+│
+├───audio
+│   │   audio_post.py
+│   │   test_audio_post.py
+│   │
+│   └───__pycache__
+│           audio_post.cpython-310.pyc
+│
+├───audio_chunks
+│       chunk_00_hook.wav
+│       chunk_01_beat.wav
+│       chunk_02_lore.wav
+│
+├───captions
+│       build_word_blocks.py
+│       build_word_highlights.py
+│       captions.json
+│       caption_timeline.json
+│       word_blocks.json
+│       word_highlights.json
+│
+├───final_audio
+│       narration.wav
+│
+├───output
+│       test_short.mp4
+│
+├───render
+│   │   overlay_engine.py
+│   │   render.py
+│   │
+│   └───__pycache__
+│           overlay_engine.cpython-310.pyc
+│
+├───scripts
+│   │   Fact4Sigma Uploader
+│   │   narrate.py
+│   │   narrate_google.py
+│   │   recipe_v1.json
+│   │   test_google_tts.py
+│   │   test_output.wav
+│   │   test_script.txt
+│   │   transformer.py
+│   │   youtube_uploader.py
+│   │
+│   ├───python scripts
+│   ├───raw
+│   ├───transformed
+│   │       recipe_audio.json
+│   │
+│   └───__pycache__
+│           transformer.cpython-310.pyc
+│
+├───secrets
+│       client_secret_483314683185-raceobqih70p0suf6ir2ku6ptr5hgct6.apps.googleusercontent.com.json
+│       client_secret_59832856895-qg9apdakn6ajbslhk9a8bfmh59gj4brv.apps.googleusercontent.com.json
+│       token.json
+│       youtube_token.pickle
+│
+└───videos
+    ├───video_159
+    │   ├───input
+    │   │       idea.json
+    │   │       script.txt
+    │   │
+    │   ├───intermediate
+    │   │       narration.wav
+    │   │       segment_timeline.json
+    │   │       words.json
+    │   │       word_blocks.json
+    │   │
+    │   └───output
+    │           audio.wav
+    │           video.mp4
+    │
+    ├───video_160
+    │   ├───input
+    │   │       idea.json
+    │   │       script.txt
+    │   │
+    │   ├───intermediate
+    │   │       narration.wav
+    │   │       segment_timeline.json
+    │   │       words.json
+    │   │       word_blocks.json
+    │   │
+    │   └───output
+    │           audio.wav
+    │           video.mp4
+
+-------------------------------------------------------------------------------------------------------------
+This are the files, I feel are responsible for this project to run, I might have accidently missed something, if something feels missing do ask me. If you try to look at the tree structure there are lot of py files and stuff which not be required at all, we can audit it and mark them not required in the future. 
+-------------------------------------------------------------------------------------------------------------
+This is what Chatgpt tried to give to build the application for this working Youtube shorts automation
+____________________________________________________________________
+----------------------------------------------------------------------------------
+run_app.py
+----------------------------------------------
+from app.main import main
+
+if __name__ == "__main__":
+    main()
+
+
+----------------------------------------------------------------------------------
+main.py
+----------------------------------------------
+import sys
+from PySide6.QtWidgets import QApplication
+from app.ui_main import MainWindow
+from pathlib import Path
+
+def main():
+    app = QApplication(sys.argv)
+
+    # Load dark theme
+    theme_path = Path(__file__).parent / "theme.qss"
+    if theme_path.exists():
+        app.setStyleSheet(theme_path.read_text())
+
+    window = MainWindow()
+    window.show()
+
+    sys.exit(app.exec())
+
+----------------------------------------------------------------------------------
+ui_main.py
+----------------------------------------------
+from PySide6.QtWidgets import (
+    QWidget, QVBoxLayout, QPushButton,
+    QTextEdit, QSpinBox, QLabel
+)
+from app.worker import EngineWorker
+
+class MainWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle("ShortsBot")
+        self.setMinimumSize(800, 520)
+
+        layout = QVBoxLayout()
+
+        title = QLabel("YouTube Shorts Automation")
+        title.setStyleSheet("font-size: 16px; font-weight: bold;")
+
+        self.count_label = QLabel("Number of videos to generate:")
+        self.count_box = QSpinBox()
+        self.count_box.setRange(1, 10)
+        self.count_box.setValue(3)
+
+        self.run_btn = QPushButton("Generate & Upload")
+        self.run_btn.clicked.connect(self.start_engine)
+
+        self.log_view = QTextEdit()
+        self.log_view.setReadOnly(True)
+
+        layout.addWidget(title)
+        layout.addWidget(self.count_label)
+        layout.addWidget(self.count_box)
+        layout.addWidget(self.run_btn)
+        layout.addWidget(self.log_view)
+
+        self.setLayout(layout)
+
+    def start_engine(self):
+        self.run_btn.setEnabled(False)
+        self.log_view.clear()
+
+        self.worker = EngineWorker(self.count_box.value())
+        self.worker.log_line.connect(self.append_log)
+        self.worker.finished_ok.connect(self.on_success)
+        self.worker.failed.connect(self.on_error)
+        self.worker.start()
+
+    def append_log(self, text: str):
+        self.log_view.append(text)
+
+    def on_success(self):
+        self.log_view.append("\n✅ Batch completed successfully.")
+        self.run_btn.setEnabled(True)
+
+    def on_error(self, message: str):
+        self.log_view.append(f"\n❌ {message}")
+        self.run_btn.setEnabled(True)
+
+
+----------------------------------------------------------------------------------
+log_filter.py
+----------------------------------------------
+NOISE_KEYWORDS = [
+    "FutureWarning",
+    "UserWarning",
+    "TypedStorage",
+    "torch._utils",
+    "google.api_core",
+    "Failed to launch Triton",
+    "timing.py"
+]
+
+def clean_log(line: str):
+    line = line.strip()
+    if not line:
+        return None
+
+    for key in NOISE_KEYWORDS:
+        if key in line:
+            return None
+
+    # Friendly wording
+    line = line.replace(
+        "⚠️ Missing overlay asset:",
+        "⚠️ Overlay skipped:"
+    )
+    line = line.replace(
+        "⚠️ Missing SFX in registry:",
+        "⚠️ Sound effect skipped:"
+    )
+
+    return line
+
+
+
+----------------------------------------------------------------------------------
+worker.py
+----------------------------------------------
+import os
+import subprocess
+from pathlib import Path
+
+from PySide6.QtCore import QThread, Signal
+
+from app.log_filter import clean_log
+
+# 🔒 Lock engine to your working venv
+ENGINE_PYTHON = r"C:\tts\venv\Scripts\python.exe"
+
+class EngineWorker(QThread):
+    log_line = Signal(str)
+    finished_ok = Signal()
+    failed = Signal(str)
+
+    def __init__(self, video_count: int):
+        super().__init__()
+        self.video_count = video_count
+
+    def run(self):
+        try:
+            engine_dir = Path(__file__).resolve().parents[2] / "shorts-bot"
+            script_path = engine_dir / "generate_batch.py"
+
+            if not script_path.exists():
+                self.failed.emit(f"Engine not found at {script_path}")
+                return
+
+            # Force UTF-8 for ALL Python subprocesses
+            env = os.environ.copy()
+            env["PYTHONUTF8"] = "1"
+
+            process = subprocess.Popen(
+                [
+                    ENGINE_PYTHON,
+                    str(script_path),
+                    str(self.video_count)
+                ],
+                cwd=str(engine_dir),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                bufsize=0,          # raw bytes
+                env=env
+            )
+
+            # 🔑 READ BYTES → DECODE UTF-8 SAFELY
+            for raw in iter(process.stdout.readline, b""):
+                try:
+                    line = raw.decode("utf-8", errors="replace").strip()
+                except Exception:
+                    continue
+
+                cleaned = clean_log(line)
+                if cleaned:
+                    self.log_line.emit(cleaned)
+
+            exit_code = process.wait()
+
+            if exit_code == 0:
+                self.finished_ok.emit()
+            elif exit_code == 99:
+                self.failed.emit(
+                    "YouTube daily upload limit reached. Resume later."
+                )
+            else:
+                self.failed.emit(
+                    "Engine stopped due to an unexpected error."
+                )
+
+        except Exception as e:
+            self.failed.emit(str(e))
+
+
+----------------------------------------------------------------------------------
+theme.qss
+----------------------------------------------
+QWidget {
+    background-color: #121212;
+    color: #e6e6e6;
+    font-family: Segoe UI;
+    font-size: 13px;
+}
+
+QPushButton {
+    background-color: #1f1f1f;
+    border: 1px solid #333;
+    padding: 8px 14px;
+    border-radius: 6px;
+}
+
+QPushButton:hover {
+    background-color: #2a2a2a;
+}
+
+QPushButton:disabled {
+    color: #777;
+}
+
+QTextEdit {
+    background-color: #0d0d0d;
+    border: 1px solid #333;
+}
+
+QSpinBox {
+    background-color: #1f1f1f;
+    border: 1px solid #333;
+    padding: 4px;
+}
+________________
+The above thing is you trying to give me a interface for the subprocess of generate_batch.py
+
+-----------------------
+File Structure of that looks like 
+----------------------
+PS C:\Users\vgaur\Desktop\shortsbotapp> tree /F
+Folder PATH listing for volume Windows
+Volume serial number is E26E-0A81
+C:.
+│   run_app.py
+│
+├───app
+│   │   log_filter.py
+│   │   main.py
+│   │   theme.qss
+│   │   ui_main.py
+│   │   worker.py
+│   │
+│   └───__pycache__
+│           log_filter.cpython-310.pyc
+│           main.cpython-310.pyc
+│           ui_main.cpython-310.pyc
+│           worker.cpython-310.pyc
+│
+└───config
+PS C:\Users\vgaur\Desktop\shortsbotapp>
+--------------------------------------------------------------------------------
+THE END
