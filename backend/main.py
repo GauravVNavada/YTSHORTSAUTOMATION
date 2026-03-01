@@ -20,23 +20,92 @@ from backend.core.models import (
     GenerateRequest, RegenerateRequest, UploadRequest,
     KeyValidateRequest, PreviewUpdateRequest, CalibrationRequest,
 )
+from backend.core.cache_manager import CacheManager
+from backend.core.sheets_client import ReferenceReader
 
 logger = get_logger(__name__)
+
+# Module-level cache manager — initialized in lifespan
+_cache: CacheManager | None = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup and shutdown logic."""
+    global _cache
     # Startup
     config.ensure_dirs()
     setup_logging(config.logs_dir, debug=config.debug)
     logger.info("Backend starting", extra={"extra_data": {
         "port": config.port, "debug": config.debug
     }})
-    # TODO: Initialize sheets cache, load calibration
+
+    # Initialize cache
+    _cache = CacheManager()
+    await _cache.initialize()
+
+    # Auto-refresh if stale or empty
+    await _try_refresh_cache(_cache)
+
     yield
+
     # Shutdown
+    if _cache:
+        await _cache.close()
     logger.info("Backend shutting down")
+
+
+async def _try_refresh_cache(cache: CacheManager) -> None:
+    """Refresh the cache from Google Sheets if stale.
+
+    Runs in a background thread since the Sheets client is synchronous.
+    Failures are logged but do NOT prevent server startup.
+    """
+    if not await cache.is_stale():
+        age = await cache.cache_age_hours()
+        logger.info(
+            f"Cache is fresh ({age:.1f}h old), skipping refresh"
+        )
+        return
+
+    logger.info("Cache is stale or empty, refreshing from Google Sheets...")
+    try:
+        reader = ReferenceReader()
+        # Fetch genres
+        genres = await asyncio.to_thread(reader.read_genres)
+        await cache.store_genres(genres)
+
+        # Fetch genre config (if the tab exists)
+        try:
+            configs = await asyncio.to_thread(reader.read_genre_config)
+            await cache.store_genre_configs(configs)
+        except Exception:
+            logger.warning("genre_config tab not found, skipping")
+
+        # Fetch reference scripts from genre tabs
+        tab_names = await asyncio.to_thread(reader.get_tab_names)
+        genre_tabs = [t for t in tab_names if t.startswith("Genre")]
+        for tab in genre_tabs:
+            try:
+                scripts = await asyncio.to_thread(
+                    reader.read_reference_scripts, tab
+                )
+                # Derive genre_id from tab name or use tab name
+                genre_id = tab.lower().replace(" ", "_")
+                await cache.store_reference_scripts(
+                    genre_id, tab, scripts
+                )
+            except Exception as exc:
+                logger.warning(
+                    f"Failed to cache scripts from '{tab}': {exc}"
+                )
+
+        logger.info("Cache refresh complete")
+    except Exception as exc:
+        logger.error(
+            "Cache refresh failed — using stale data if available",
+            exc_info=exc,
+        )
 
 
 app = FastAPI(
@@ -83,12 +152,14 @@ async def health():
 @app.get("/api/genres")
 async def get_genres():
     """Get genre list from cached sheet data."""
-    # TODO: Read from sheets cache
+    genres = await _cache.get_genres()
+    age = await _cache.cache_age_hours()
+    last_refresh = await _cache.last_refresh_iso()
     return {
         "success": True,
-        "genres": [],
-        "cache_age_hours": 0,
-        "last_refresh": None,
+        "genres": [g.model_dump() for g in genres],
+        "cache_age_hours": round(age, 2) if age != float("inf") else None,
+        "last_refresh": last_refresh,
     }
 
 

@@ -8,9 +8,14 @@ venv/
 
 # Keys & secrets (NEVER commit these!)
 *-key.json
+shorts-bot-*.json
 *.enc
 .env
 config/secrets.json
+
+# Runtime data
+data/
+logs/
 
 # Assets (too large for git)
 assets/gameplay/

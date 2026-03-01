@@ -79,6 +79,10 @@ class AppConfig(BaseModel):
     submissions_enabled: bool = True
     debug_logging: bool = False
 
+    # ─── AI Models ─────────────────────────────────
+    gemini_model: str = "gemini-2.5-flash"
+    groq_model: str = "llama-3.3-70b-versatile"
+
     # ─── TTS Defaults ──────────────────────────────
     default_tts_voice: str = "en-US-Neural2-D"
     default_tts_rate: float = 0.95
