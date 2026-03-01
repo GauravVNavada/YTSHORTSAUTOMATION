@@ -6,6 +6,13 @@ import os
 from pathlib import Path
 from pydantic import BaseModel
 
+# Load .env file if it exists (for BYOK API keys)
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).parent.parent.parent / ".env")
+except ImportError:
+    pass  # dotenv not installed — keys must be in environment
+
 
 def _get_base_dir() -> Path:
     """Get the application data directory."""
@@ -88,6 +95,10 @@ class AppConfig(BaseModel):
     default_tts_voice: str = "en-US-Neural2-D"
     default_tts_rate: float = 0.95
     default_tts_pitch: float = 0.0
+
+    # ─── User API Keys (BYOK) ─────────────────────
+    pexels_key: str = os.environ.get("PEXELS_API_KEY", "")
+    pixabay_key: str = os.environ.get("PIXABAY_API_KEY", "")
 
     # ─── Video Defaults ────────────────────────────
     video_width: int = 1080
