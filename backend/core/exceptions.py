@@ -104,3 +104,9 @@ class CacheError(YTShortsAutoError):
     """Local cache read/write failed."""
     error_code = "CACHE_ERROR"
     retry_allowed = True
+
+
+class PipelineError(YTShortsAutoError):
+    """Pipeline orchestration failed at a stage."""
+    error_code = "PIPELINE_ERROR"
+    retry_allowed = True

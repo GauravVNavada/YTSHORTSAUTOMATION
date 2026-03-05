@@ -61,6 +61,12 @@ CREATE TABLE IF NOT EXISTS cache_meta (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS pipeline_jobs (
+    job_id TEXT PRIMARY KEY,
+    state_json TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
 """
 
 
@@ -400,3 +406,68 @@ class CacheManager:
             return row["value"] if row else None
         except Exception:
             return None
+
+    # ─── Pipeline State Persistence ────────────────────
+
+    async def save_pipeline_state(self, state) -> None:
+        """Save PipelineState to SQLite for crash recovery.
+
+        Args:
+            state: PipelineState model instance.
+        """
+        now = datetime.now(timezone.utc).isoformat()
+        state_json = state.model_dump_json()
+        await self._db.execute(
+            "INSERT OR REPLACE INTO pipeline_jobs "
+            "(job_id, state_json, updated_at) VALUES (?, ?, ?)",
+            (state.job_id, state_json, now),
+        )
+        await self._db.commit()
+
+    async def load_pipeline_state(self, job_id: str):
+        """Load PipelineState from SQLite.
+
+        Args:
+            job_id: Job identifier.
+
+        Returns:
+            PipelineState or None if not found.
+        """
+        from backend.core.models import PipelineState
+        try:
+            async with self._db.execute(
+                "SELECT state_json FROM pipeline_jobs WHERE job_id = ?",
+                (job_id,),
+            ) as cursor:
+                row = await cursor.fetchone()
+            if row:
+                return PipelineState.model_validate_json(row["state_json"])
+            return None
+        except Exception as exc:
+            logger.warning(f"Failed to load pipeline state: {exc}")
+            return None
+
+    async def list_recent_jobs(self, limit: int = 20) -> list:
+        """List recent pipeline jobs.
+
+        Args:
+            limit: Max jobs to return.
+
+        Returns:
+            List of PipelineState objects.
+        """
+        from backend.core.models import PipelineState
+        try:
+            async with self._db.execute(
+                "SELECT state_json FROM pipeline_jobs "
+                "ORDER BY updated_at DESC LIMIT ?",
+                (limit,),
+            ) as cursor:
+                rows = await cursor.fetchall()
+            return [
+                PipelineState.model_validate_json(r["state_json"])
+                for r in rows
+            ]
+        except Exception as exc:
+            logger.warning(f"Failed to list jobs: {exc}")
+            return []
