@@ -124,7 +124,7 @@ def test_build_ffmpeg_cmd_single_image():
 
 
 def test_build_ffmpeg_cmd_multi_image():
-    """Multiple images should use -filter_complex."""
+    """Multiple images should use -filter_complex with xfade."""
     cmd = build_ffmpeg_cmd(
         ffmpeg="ffmpeg",
         audio_path="audio.wav",
@@ -133,8 +133,9 @@ def test_build_ffmpeg_cmd_multi_image():
         output_path="out.mp4",
         duration_ms=45000,
     )
+    cmd_str = " ".join(cmd)
     assert "-filter_complex" in cmd
-    assert "concat=n=3" in " ".join(cmd)
+    assert "xfade" in cmd_str
 
 
 def test_encoding_settings():

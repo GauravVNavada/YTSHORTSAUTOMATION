@@ -1,17 +1,14 @@
 """
 Audio Agent — orchestrates TTS generation and audio mixing.
 
-Pipeline:
+Pipeline per MASTER_BLUEPRINT §7:
     1. Build SSML from narration + genre config
     2. Call TTS service → get audio bytes + word timestamps
     3. Save raw narration WAV
-    4. Mix with music + SFX (basic version — ducking in v2)
-    5. Return AudioBundle
-
-Follows agent isolation rules:
-    - Input/output are Pydantic models
-    - TTSService is dependency-injected
-    - Never imports other agents
+    4. Select best music segment (librosa RMS energy)
+    5. Mix: narration + music (-14dB ducked) + SFX (-8dB pre-lap 200ms)
+    6. LUFS normalize to -14
+    7. Return AudioBundle
 """
 import asyncio
 import io
@@ -24,9 +21,10 @@ from backend.core.config import config
 from backend.core.exceptions import TTSError, AudioMixError
 from backend.core.logger import get_logger
 from backend.core.models import (
-    AudioBundle,
-    GenreConfig,
-    WordTimestamp,
+    AudioBundle, GenreConfig, WordTimestamp,
+)
+from backend.services.audio_utils import (
+    mix_audio_tracks, select_music_segment,
 )
 
 logger = get_logger(__name__)
@@ -45,12 +43,10 @@ class AudioAgent:
         self._tts = tts_service
 
     async def generate(
-        self,
-        narration: str,
-        genre_config: GenreConfig,
-        job_id: str,
-        hook_line: str = "",
+        self, narration: str, genre_config: GenreConfig,
+        job_id: str, hook_line: str = "",
         sfx_paths: Optional[list[str]] = None,
+        sfx_timings_ms: Optional[list[int]] = None,
         music_path: Optional[str] = None,
     ) -> AudioBundle:
         """Generate complete audio for a video.
@@ -58,59 +54,55 @@ class AudioAgent:
         Args:
             narration: Plain text narration from ScriptOutput.
             genre_config: Genre-specific TTS settings.
-            job_id: Unique job identifier for file naming.
-            hook_line: The hook sentence for emphasis.
-            sfx_paths: Optional SFX file paths to mix in.
-            music_path: Optional background music file path.
+            job_id: Unique job identifier.
+            hook_line: Hook sentence for emphasis.
+            sfx_paths: SFX file paths to mix in.
+            sfx_timings_ms: Placement times for each SFX (ms).
+            music_path: Background music file path.
 
         Returns:
             AudioBundle with paths and timestamps.
-
-        Raises:
-            TTSError: If TTS generation fails.
-            AudioMixError: If audio mixing fails.
         """
         audio_dir = config.data_dir / "audio" / job_id
         audio_dir.mkdir(parents=True, exist_ok=True)
 
         # Step 1: Build SSML
         ssml = build_ssml(narration, genre_config, hook_line)
-        logger.info(
-            "SSML built for TTS",
-            extra={"extra_data": {"job_id": job_id}},
-        )
+        logger.info("SSML built", extra={"extra_data": {"job_id": job_id}})
 
         # Step 2: Call TTS with retry
         audio_bytes, timestamps = await self._tts_with_retry(
-            ssml, genre_config
+            ssml, genre_config,
         )
 
         # Step 3: Save raw narration WAV
         narration_path = audio_dir / "narration.wav"
         _save_wav(audio_bytes, narration_path)
-        logger.info(
-            "Narration audio saved",
-            extra={"extra_data": {
-                "path": str(narration_path),
-                "bytes": len(audio_bytes),
-                "timestamps": len(timestamps),
-            }},
-        )
 
         # Step 4: Calculate duration
         duration_ms = _get_wav_duration_ms(audio_bytes)
 
-        # Step 5: Mix audio (basic — just copy narration for now)
-        final_path = audio_dir / "final_audio.wav"
+        # Step 5: Select best music segment (librosa energy)
+        prepared_music = None
         if music_path and Path(music_path).exists():
-            await self._mix_audio(
-                narration_path, music_path, sfx_paths or [],
-                final_path, duration_ms,
-            )
-        else:
-            # No music — narration only
-            _save_wav(audio_bytes, final_path)
-            logger.info("No music provided, using narration only")
+            prepared_music = select_music_segment(music_path, duration_ms)
+
+        # Step 6: Mix audio with frequency-aware ducking
+        final_path = audio_dir / "final_audio.wav"
+        mix_audio_tracks(
+            narration_path=str(narration_path),
+            music_path=prepared_music,
+            sfx_paths=sfx_paths or [],
+            sfx_timings_ms=sfx_timings_ms or [],
+            output_path=str(final_path),
+            duration_ms=duration_ms,
+        )
+
+        logger.info("Audio pipeline complete", extra={"extra_data": {
+            "job_id": job_id, "duration_ms": duration_ms,
+            "has_music": prepared_music is not None,
+            "sfx_count": len(sfx_paths or []),
+        }})
 
         return AudioBundle(
             audio_path=str(final_path),
@@ -120,13 +112,9 @@ class AudioAgent:
         )
 
     async def _tts_with_retry(
-        self, ssml: str, genre_config: GenreConfig
+        self, ssml: str, genre_config: GenreConfig,
     ) -> tuple[bytes, list[WordTimestamp]]:
         """Call TTS with retry logic.
-
-        Args:
-            ssml: SSML-formatted text.
-            genre_config: Genre TTS settings.
 
         Returns:
             Tuple of (audio_bytes, word_timestamps).
@@ -154,87 +142,18 @@ class AudioAgent:
             details=str(last_error),
         )
 
-    async def _mix_audio(
-        self,
-        narration_path: Path,
-        music_path: str,
-        sfx_paths: list[str],
-        output_path: Path,
-        duration_ms: int,
-    ) -> None:
-        """Mix narration with background music and SFX.
-
-        Uses pydub for audio manipulation. Background music is lowered
-        to -18dB relative to narration (basic ducking).
-
-        Args:
-            narration_path: Path to narration WAV.
-            music_path: Path to background music file.
-            sfx_paths: List of SFX file paths.
-            output_path: Path to write final mixed WAV.
-            duration_ms: Target duration in milliseconds.
-
-        Raises:
-            AudioMixError: If mixing fails.
-        """
-        try:
-            from pydub import AudioSegment
-
-            narration = AudioSegment.from_wav(str(narration_path))
-
-            # Load and prepare background music
-            music = AudioSegment.from_file(music_path)
-            # Loop/trim music to match narration length
-            if len(music) < len(narration):
-                loops = (len(narration) // len(music)) + 1
-                music = music * loops
-            music = music[:len(narration)]
-            # Duck music volume (-18dB relative to narration)
-            music = music - 18
-
-            # Mix narration + music
-            mixed = narration.overlay(music)
-
-            # Export final audio
-            mixed.export(str(output_path), format="wav")
-            logger.info(
-                "Audio mixed successfully",
-                extra={"extra_data": {
-                    "duration_ms": len(mixed),
-                    "has_music": True,
-                }},
-            )
-
-        except Exception as exc:
-            raise AudioMixError(
-                f"Audio mixing failed: {exc}",
-                details=str(exc),
-            )
-
 
 # ─── Helpers ───────────────────────────────────────────
 
 def _save_wav(audio_bytes: bytes, path: Path) -> None:
-    """Save raw audio bytes to a WAV file.
-
-    Args:
-        audio_bytes: Raw audio content from TTS.
-        path: Path to save the WAV file.
-    """
+    """Save raw audio bytes to a WAV file."""
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "wb") as f:
         f.write(audio_bytes)
 
 
 def _get_wav_duration_ms(audio_bytes: bytes) -> int:
-    """Calculate the duration of a WAV file in milliseconds.
-
-    Args:
-        audio_bytes: Raw WAV audio bytes.
-
-    Returns:
-        Duration in milliseconds.
-    """
+    """Calculate WAV file duration in milliseconds."""
     try:
         buf = io.BytesIO(audio_bytes)
         with wave.open(buf, "rb") as w:
@@ -242,6 +161,5 @@ def _get_wav_duration_ms(audio_bytes: bytes) -> int:
             rate = w.getframerate()
             return int((frames / rate) * 1000)
     except Exception:
-        # Fallback: assume ~24KB per second for 24kHz 16-bit mono
         estimated = int(len(audio_bytes) / 48.0)
-        return max(estimated, 1000)  # At least 1 second
+        return max(estimated, 1000)

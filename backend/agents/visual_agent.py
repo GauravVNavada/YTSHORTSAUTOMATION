@@ -100,6 +100,9 @@ class VisualAgent:
             caption_path=str(caption_path),
             output_path=str(tmp_path),
             duration_ms=audio_bundle.duration_ms,
+            genre_id=genre_config.genre_id,
+            layout=genre_config.layout,
+            gameplay_path=getattr(asset_bundle, "gameplay_path", "") or "",
         )
 
         # Step 4: Render with timeout

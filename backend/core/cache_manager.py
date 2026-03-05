@@ -211,6 +211,29 @@ class CacheManager:
 
     # ─── Write Methods ─────────────────────────────────
 
+    async def get_recent_scripts(
+        self, genre_id: str, limit: int = 50,
+    ) -> list[str]:
+        """Get narrations from recently generated scripts for dedup.
+
+        Args:
+            genre_id: Genre identifier.
+            limit: Max number of recent scripts (default 50).
+
+        Returns:
+            List of narration text strings.
+        """
+        try:
+            async with self._db.execute(
+                "SELECT script_text FROM reference_scripts "
+                "WHERE genre_id = ? ORDER BY id DESC LIMIT ?",
+                (genre_id, limit),
+            ) as cursor:
+                rows = await cursor.fetchall()
+            return [row["script_text"] for row in rows]
+        except Exception:
+            return []
+
     async def store_genres(self, genres: list[Genre]) -> None:
         """Replace all genres in the cache.
 

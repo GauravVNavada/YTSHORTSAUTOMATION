@@ -34,39 +34,52 @@ VIDEO_HEIGHT = 1920
 # ─── Genre Preset Styles ──────────────────────────────
 _PRESETS = {
     "clean_pro": {
-        "font": "Montserrat",
-        "font_size": 64,
-        "primary": "&H00FFFFFF",   # White
-        "outline": "&H00000000",   # Black outline
-        "border": 3,
+        "font": "Montserrat", "font_size": 64,
+        "primary": "&H00FFFFFF", "outline": "&H00000000", "border": 3,
     },
     "horror_red": {
-        "font": "Creepster",
-        "font_size": 60,
-        "primary": "&H0000CCFF",   # Red (BGR)
-        "outline": "&H00000000",
-        "border": 3,
+        "font": "Creepster", "font_size": 60,
+        "primary": "&H0000CCFF", "outline": "&H00000000", "border": 3,
     },
     "bold_pop": {
-        "font": "Anton",
-        "font_size": 72,
-        "primary": "&H0000FFFF",   # Yellow
-        "outline": "&H00000000",
-        "border": 4,
+        "font": "Anton", "font_size": 72,
+        "primary": "&H0000FFFF", "outline": "&H00000000", "border": 4,
     },
     "neon_glow": {
-        "font": "Oswald",
-        "font_size": 60,
-        "primary": "&H00FF66CC",   # Neon pink
-        "outline": "&H00330033",
-        "border": 3,
+        "font": "Oswald", "font_size": 60,
+        "primary": "&H00FF66CC", "outline": "&H00330033", "border": 3,
     },
     "minimal": {
-        "font": "Roboto",
-        "font_size": 56,
-        "primary": "&H00FFFFFF",
-        "outline": "&H00333333",
-        "border": 2,
+        "font": "Roboto", "font_size": 56,
+        "primary": "&H00FFFFFF", "outline": "&H00333333", "border": 2,
+    },
+    "classic_white": {
+        "font": "Arial", "font_size": 62,
+        "primary": "&H00FFFFFF", "outline": "&H00000000", "border": 3,
+    },
+    "tiktok_bright": {
+        "font": "Poppins", "font_size": 68,
+        "primary": "&H0000FFFF", "outline": "&H00000000", "border": 4,
+    },
+    "karaoke_fill": {
+        "font": "Montserrat", "font_size": 66,
+        "primary": "&H0000FF00", "outline": "&H00000000", "border": 3,
+    },
+    "typewriter_mono": {
+        "font": "Courier New", "font_size": 54,
+        "primary": "&H0000FF00", "outline": "&H00111111", "border": 2,
+    },
+    "comic_burst": {
+        "font": "Bangers", "font_size": 74,
+        "primary": "&H0000DDFF", "outline": "&H00000088", "border": 5,
+    },
+    "fire_gradient": {
+        "font": "Impact", "font_size": 70,
+        "primary": "&H000055FF", "outline": "&H000000AA", "border": 4,
+    },
+    "ice_cool": {
+        "font": "Nunito", "font_size": 60,
+        "primary": "&H00FFCC66", "outline": "&H00331100", "border": 3,
     },
 }
 

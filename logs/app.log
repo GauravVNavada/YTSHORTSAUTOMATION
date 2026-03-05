@@ -1,2 +1,38 @@
 {"timestamp": "2026-03-01T15:54:56.071767+00:00", "level": "INFO", "module": "main", "message": "Backend starting", "extra": {"port": 8742, "debug": false}}
 {"timestamp": "2026-03-01T15:56:03.994914+00:00", "level": "INFO", "module": "main", "message": "Backend shutting down"}
+{"timestamp": "2026-03-01T16:58:52.677228+00:00", "level": "INFO", "module": "main", "message": "Backend starting", "extra": {"port": 8742, "debug": false}}
+{"timestamp": "2026-03-01T16:58:52.698117+00:00", "level": "INFO", "module": "cache_manager", "message": "Cache database initialized", "extra": {"path": "C:\\Users\\vgaur\\Desktop\\YTSHORTSAUTOMATION\\data\\sheets_cache.db"}}
+{"timestamp": "2026-03-01T16:58:52.699481+00:00", "level": "INFO", "module": "main", "message": "Cache is stale or empty, refreshing from Google Sheets..."}
+{"timestamp": "2026-03-01T16:58:54.486514+00:00", "level": "INFO", "module": "sheets_client", "message": "Genres loaded from sheet", "extra": {"count": 0}}
+{"timestamp": "2026-03-01T16:58:54.495148+00:00", "level": "INFO", "module": "cache_manager", "message": "Genres stored in cache", "extra": {"count": 0}}
+{"timestamp": "2026-03-01T16:58:54.959745+00:00", "level": "WARNING", "module": "main", "message": "genre_config tab not found, skipping"}
+{"timestamp": "2026-03-01T16:58:56.789376+00:00", "level": "INFO", "module": "sheets_client", "message": "Reference scripts loaded from 'Genre 1'", "extra": {"count": 1}}
+{"timestamp": "2026-03-01T16:58:56.802000+00:00", "level": "INFO", "module": "cache_manager", "message": "Reference scripts stored for 'genre_1'", "extra": {"count": 1}}
+{"timestamp": "2026-03-01T16:58:57.229240+00:00", "level": "INFO", "module": "sheets_client", "message": "Reference scripts loaded from 'Genre 2'", "extra": {"count": 1}}
+{"timestamp": "2026-03-01T16:58:57.236546+00:00", "level": "INFO", "module": "cache_manager", "message": "Reference scripts stored for 'genre_2'", "extra": {"count": 1}}
+{"timestamp": "2026-03-01T16:58:57.671554+00:00", "level": "INFO", "module": "sheets_client", "message": "Reference scripts loaded from 'Genre 3'", "extra": {"count": 1}}
+{"timestamp": "2026-03-01T16:58:57.683095+00:00", "level": "INFO", "module": "cache_manager", "message": "Reference scripts stored for 'genre_3'", "extra": {"count": 1}}
+{"timestamp": "2026-03-01T16:58:58.150493+00:00", "level": "INFO", "module": "sheets_client", "message": "Reference scripts loaded from 'Genre 4'", "extra": {"count": 1}}
+{"timestamp": "2026-03-01T16:58:58.163867+00:00", "level": "INFO", "module": "cache_manager", "message": "Reference scripts stored for 'genre_4'", "extra": {"count": 1}}
+{"timestamp": "2026-03-01T16:58:58.616376+00:00", "level": "INFO", "module": "sheets_client", "message": "Reference scripts loaded from 'Genre 5'", "extra": {"count": 1}}
+{"timestamp": "2026-03-01T16:58:58.626864+00:00", "level": "INFO", "module": "cache_manager", "message": "Reference scripts stored for 'genre_5'", "extra": {"count": 1}}
+{"timestamp": "2026-03-01T16:58:58.629572+00:00", "level": "INFO", "module": "main", "message": "Cache refresh complete"}
+{"timestamp": "2026-03-01T17:05:22.057548+00:00", "level": "INFO", "module": "main", "message": "Backend shutting down"}
+{"timestamp": "2026-03-01T17:06:27.582067+00:00", "level": "INFO", "module": "main", "message": "Backend starting", "extra": {"port": 8742, "debug": false}}
+{"timestamp": "2026-03-01T17:06:27.608150+00:00", "level": "INFO", "module": "cache_manager", "message": "Cache database initialized", "extra": {"path": "C:\\Users\\vgaur\\Desktop\\YTSHORTSAUTOMATION\\data\\sheets_cache.db"}}
+{"timestamp": "2026-03-01T17:06:27.609164+00:00", "level": "INFO", "module": "main", "message": "Cache is stale or empty, refreshing from Google Sheets..."}
+{"timestamp": "2026-03-01T17:06:28.752100+00:00", "level": "INFO", "module": "sheets_client", "message": "Genres loaded from sheet", "extra": {"count": 15}}
+{"timestamp": "2026-03-01T17:06:28.772563+00:00", "level": "INFO", "module": "cache_manager", "message": "Genres stored in cache", "extra": {"count": 15}}
+{"timestamp": "2026-03-01T17:06:29.271861+00:00", "level": "WARNING", "module": "main", "message": "genre_config tab not found, skipping"}
+{"timestamp": "2026-03-01T17:06:30.186850+00:00", "level": "INFO", "module": "sheets_client", "message": "Reference scripts loaded from 'Genre 1'", "extra": {"count": 0}}
+{"timestamp": "2026-03-01T17:06:30.189352+00:00", "level": "INFO", "module": "cache_manager", "message": "Reference scripts stored for 'genre_1'", "extra": {"count": 0}}
+{"timestamp": "2026-03-01T17:06:30.687186+00:00", "level": "INFO", "module": "sheets_client", "message": "Reference scripts loaded from 'Genre 2'", "extra": {"count": 0}}
+{"timestamp": "2026-03-01T17:06:30.687874+00:00", "level": "INFO", "module": "cache_manager", "message": "Reference scripts stored for 'genre_2'", "extra": {"count": 0}}
+{"timestamp": "2026-03-01T17:06:31.153666+00:00", "level": "INFO", "module": "sheets_client", "message": "Reference scripts loaded from 'Genre 3'", "extra": {"count": 0}}
+{"timestamp": "2026-03-01T17:06:31.157854+00:00", "level": "INFO", "module": "cache_manager", "message": "Reference scripts stored for 'genre_3'", "extra": {"count": 0}}
+{"timestamp": "2026-03-01T17:06:31.606256+00:00", "level": "INFO", "module": "sheets_client", "message": "Reference scripts loaded from 'Genre 4'", "extra": {"count": 0}}
+{"timestamp": "2026-03-01T17:06:31.609051+00:00", "level": "INFO", "module": "cache_manager", "message": "Reference scripts stored for 'genre_4'", "extra": {"count": 0}}
+{"timestamp": "2026-03-01T17:06:32.045506+00:00", "level": "INFO", "module": "sheets_client", "message": "Reference scripts loaded from 'Genre 5'", "extra": {"count": 0}}
+{"timestamp": "2026-03-01T17:06:32.048002+00:00", "level": "INFO", "module": "cache_manager", "message": "Reference scripts stored for 'genre_5'", "extra": {"count": 0}}
+{"timestamp": "2026-03-01T17:06:32.049105+00:00", "level": "INFO", "module": "main", "message": "Cache refresh complete"}
+{"timestamp": "2026-03-01T17:07:44.779533+00:00", "level": "INFO", "module": "main", "message": "Backend shutting down"}

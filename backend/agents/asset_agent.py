@@ -1,310 +1,258 @@
 """
 Asset Agent — fetches images, SFX, and music for a video.
 
-Implements the 7-tier image fallback system from MASTER_BLUEPRINT:
-    Tier 1: Local cache (SQLite)
-    Tier 2: Pexels API
-    Tier 3: Pixabay API
-    Tier 4-7: Fallback stubs (DDG, Wikimedia, LLM rewrite, genre default)
-
-Also resolves SFX from the local library and selects background music.
-Follows agent isolation rules — no cross-agent imports.
+Implements the full 7-tier image fallback system from MASTER_BLUEPRINT §8.
+Tiers 2+3 run in parallel per slot. All 5 image slots fetched concurrently.
 """
 import asyncio
+import random
 from pathlib import Path
 from typing import Optional
 
 from backend.core.config import config
-from backend.core.exceptions import ImageFetchError, AudioMixError
+from backend.core.exceptions import ImageFetchError
 from backend.core.logger import get_logger
 from backend.core.models import (
-    AssetBundle,
-    ImageCue,
-    SfxCue,
-    GenreConfig,
+    AssetBundle, ImageCue, SfxCue, GenreConfig,
 )
 from backend.services.image_service import (
-    search_pexels,
-    search_pixabay,
-    download_image,
+    search_pexels, search_pixabay, search_duckduckgo,
+    search_wikimedia, download_image, ImageResult,
 )
 
 logger = get_logger(__name__)
+
+# Genre fallback colors for Tier 7
+_GENRE_COLORS = {
+    "scary_stories": (20, 10, 30),
+    "motivation": (30, 20, 10),
+    "tech_ai": (10, 15, 30),
+    "history": (25, 20, 15),
+    "science": (10, 20, 30),
+    "psychology": (20, 15, 25),
+}
 
 
 class AssetAgent:
     """Fetches all media assets needed for video rendering.
 
     Args:
-        pexels_key: User's Pexels API key (optional).
-        pixabay_key: User's Pixabay API key (optional).
+        pexels_key: Pexels API key.
+        pixabay_key: Pixabay API key.
+        gemini_service: Optional LLM service for Tier 6 reformulation.
     """
 
-    def __init__(
-        self,
-        pexels_key: str = "",
-        pixabay_key: str = "",
-    ):
+    def __init__(self, pexels_key="", pixabay_key="", gemini_service=None):
         self._pexels_key = pexels_key
         self._pixabay_key = pixabay_key
+        self._gemini = gemini_service
 
     async def generate(
-        self,
-        image_cues: list[ImageCue],
-        sfx_cues: list[SfxCue],
-        genre_config: GenreConfig,
-        job_id: str,
+        self, image_cues: list[ImageCue], sfx_cues: list[SfxCue],
+        genre_config: GenreConfig, job_id: str,
     ) -> AssetBundle:
         """Fetch all assets for the video.
 
-        Args:
-            image_cues: Image cues from ScriptOutput.
-            sfx_cues: SFX cues from ScriptOutput.
-            genre_config: Genre configuration for music mood.
-            job_id: Unique job identifier for file organization.
-
-        Returns:
-            AssetBundle with paths to all fetched assets.
-
-        Raises:
-            AssetError: If critical assets cannot be fetched.
+        All image slots fetched concurrently per MASTER_BLUEPRINT §8.
         """
         asset_dir = config.data_dir / "assets" / job_id
         image_dir = asset_dir / "images"
         image_dir.mkdir(parents=True, exist_ok=True)
 
-        # Fetch images in parallel (one task per cue)
+        # Parallel image fetching — one task per cue
         image_tasks = [
-            self._fetch_image(cue, image_dir, i)
+            self._fetch_image(cue, image_dir, i, genre_config.genre_id)
             for i, cue in enumerate(image_cues)
         ]
-        image_paths = await asyncio.gather(
-            *image_tasks, return_exceptions=True
-        )
+        results = await asyncio.gather(*image_tasks, return_exceptions=True)
 
-        # Filter out failures, keep valid paths
-        valid_image_paths = [
-            p for p in image_paths if isinstance(p, str)
-        ]
-        failed_count = len(image_paths) - len(valid_image_paths)
-        if failed_count > 0:
-            logger.warning(
-                f"{failed_count} image(s) failed to fetch",
-                extra={"extra_data": {"job_id": job_id}},
-            )
+        valid = [p for p in results if isinstance(p, str)]
+        failed = len(results) - len(valid)
+        if failed > 0:
+            logger.warning(f"{failed} image(s) failed to fetch")
 
-        # Resolve SFX from local library
         sfx_paths = self._resolve_sfx(sfx_cues)
-
-        # Select background music by mood
         music_path = self._select_music(genre_config.music_mood)
-
-        # Select gameplay clip if layout requires it
         gameplay_path = self._select_gameplay(genre_config.layout)
 
-        logger.info(
-            "Assets fetched",
-            extra={"extra_data": {
-                "images": len(valid_image_paths),
-                "sfx": len(sfx_paths),
-                "has_music": music_path is not None,
-                "has_gameplay": gameplay_path is not None,
-            }},
-        )
+        logger.info("Assets fetched", extra={"extra_data": {
+            "images": len(valid), "sfx": len(sfx_paths),
+            "has_music": music_path is not None,
+        }})
 
         return AssetBundle(
-            image_paths=valid_image_paths,
-            sfx_paths=sfx_paths,
-            music_path=music_path,
-            gameplay_path=gameplay_path,
+            image_paths=valid, sfx_paths=sfx_paths,
+            music_path=music_path, gameplay_path=gameplay_path,
         )
 
     async def _fetch_image(
-        self, cue: ImageCue, save_dir: Path, index: int
+        self, cue: ImageCue, save_dir: Path, idx: int, genre_id: str,
     ) -> str:
-        """Fetch a single image using the 7-tier fallback.
+        """Fetch one image using full 7-tier fallback.
 
-        Args:
-            cue: Image cue with keyword and mood.
-            save_dir: Directory to save downloaded images.
-            index: Image index for filename.
-
-        Returns:
-            Path to the downloaded image.
-
-        Raises:
-            AssetError: If all tiers fail.
+        Tiers 2+3 run in parallel per MASTER_BLUEPRINT §8.
         """
         query = cue.keyword
-        filename = f"img_{index:02d}.jpg"
+        fname = f"img_{idx:02d}.jpg"
 
-        # Tier 1: Check local cache
-        cached = save_dir / filename
+        # Tier 1: Local cache
+        cached = save_dir / fname
         if cached.exists():
-            logger.debug(f"Tier 1 cache hit: {filename}")
+            logger.debug(f"Tier 1 cache hit: {fname}")
             return str(cached)
 
-        # Tier 2: Pexels API
+        # Tier 2+3: Pexels + Pixabay IN PARALLEL
+        best = await self._search_tiers_2_3(query)
+        if best:
+            return await download_image(best.url, save_dir, fname)
+
+        # Tier 4: DuckDuckGo
         try:
-            results = await search_pexels(
-                query, self._pexels_key
-            )
+            results = await search_duckduckgo(query)
             if results:
-                best = max(results, key=lambda r: r.score)
-                return await download_image(
-                    best.url, save_dir, filename
-                )
+                best = max(results, key=lambda r: r.score_for(query))
+                return await download_image(best.url, save_dir, fname)
         except Exception as exc:
-            logger.debug(f"Tier 2 (Pexels) failed: {exc}")
+            logger.debug(f"Tier 4 (DDG) failed: {exc}")
 
-        # Tier 3: Pixabay API
+        # Tier 5: Wikimedia Commons
         try:
-            results = await search_pixabay(
-                query, self._pixabay_key
-            )
+            results = await search_wikimedia(query)
             if results:
-                best = max(results, key=lambda r: r.score)
-                return await download_image(
-                    best.url, save_dir, filename
-                )
+                best = max(results, key=lambda r: r.score_for(query))
+                return await download_image(best.url, save_dir, fname)
         except Exception as exc:
-            logger.debug(f"Tier 3 (Pixabay) failed: {exc}")
+            logger.debug(f"Tier 5 (Wikimedia) failed: {exc}")
 
-        # Tier 4-6: DuckDuckGo, Wikimedia, LLM (stubs)
-        logger.debug(f"Tiers 4-6 not yet implemented for: {query}")
+        # Tier 6: LLM reformulation → retry Pexels
+        reformulated = await self._llm_reformulate(query)
+        if reformulated and reformulated != query:
+            logger.info(f"Tier 6: '{query}' → '{reformulated}'")
+            best = await self._search_tiers_2_3(reformulated)
+            if best:
+                return await download_image(best.url, save_dir, fname)
 
-        # Tier 7: Genre fallback — use a placeholder
-        logger.warning(
-            f"All image tiers failed for '{query}', using fallback",
-        )
-        return _create_fallback_image(save_dir, filename, cue.mood)
+        # Tier 7: Genre fallback — pre-cached image + genre tint
+        logger.warning(f"All tiers failed for '{query}', using genre fallback")
+        return _create_genre_fallback(save_dir, fname, genre_id, cue.mood)
+
+    async def _search_tiers_2_3(self, query: str) -> Optional[ImageResult]:
+        """Run Pexels + Pixabay in parallel, return best result."""
+        try:
+            pexels_task = search_pexels(query, self._pexels_key)
+            pixabay_task = search_pixabay(query, self._pixabay_key)
+            pex_results, pix_results = await asyncio.gather(
+                pexels_task, pixabay_task, return_exceptions=True,
+            )
+            all_results = []
+            if isinstance(pex_results, list):
+                all_results.extend(pex_results)
+            if isinstance(pix_results, list):
+                all_results.extend(pix_results)
+            if all_results:
+                return max(all_results, key=lambda r: r.score_for(query))
+        except Exception as exc:
+            logger.debug(f"Tiers 2+3 failed: {exc}")
+        return None
+
+    async def _llm_reformulate(self, query: str) -> Optional[str]:
+        """Use Gemini to rewrite a failed image query.
+
+        Spec §8 Tier 6: "Spider-Man" → "person in red spandex".
+        """
+        if not self._gemini:
+            return None
+        try:
+            prompt = (
+                f"Rewrite this image search query to avoid copyrighted "
+                f"names while keeping the visual meaning. Return ONLY "
+                f"the new query, nothing else.\n\nQuery: {query}"
+            )
+            result = await self._gemini(
+                "You are a helpful image search assistant.", prompt,
+            )
+            return result.strip()[:100] if result else None
+        except Exception as exc:
+            logger.debug(f"Tier 6 LLM reformulation failed: {exc}")
+            return None
 
     def _resolve_sfx(self, sfx_cues: list[SfxCue]) -> list[str]:
         """Resolve SFX cues to local file paths.
 
-        Checks the local SFX library (assets/sfx/) for matching files.
-        If no match found, the cue is skipped (silence > wrong sound).
-
-        Args:
-            sfx_cues: SFX cues from ScriptOutput.
-
-        Returns:
-            List of paths to resolved SFX files.
+        Silence > wrong sound per MASTER_BLUEPRINT §11.
         """
         sfx_dir = config.assets_dir / "sfx"
         paths = []
         for cue in sfx_cues:
-            # Try exact match: sfx_type.wav or sfx_type.mp3
             for ext in (".wav", ".mp3", ".ogg"):
                 candidate = sfx_dir / f"{cue.sfx_type}{ext}"
                 if candidate.exists():
                     paths.append(str(candidate))
                     break
-            # Also try category folders
-            category_dir = sfx_dir / cue.sfx_type
-            if category_dir.is_dir():
-                files = list(category_dir.glob("*.*"))
-                if files:
-                    paths.append(str(files[0]))
+            else:
+                # Try category folders
+                cat_dir = sfx_dir / cue.sfx_type
+                if cat_dir.is_dir():
+                    files = list(cat_dir.glob("*.*"))
+                    if files:
+                        paths.append(str(files[0]))
         return paths
 
-    def _select_music(
-        self, mood: str
-    ) -> Optional[str]:
-        """Select a background music track by mood.
-
-        Looks in assets/music/{mood}/ for available tracks.
-
-        Args:
-            mood: Music mood from GenreConfig.
-
-        Returns:
-            Path to the selected music file, or None.
-        """
+    def _select_music(self, mood: str) -> Optional[str]:
+        """Select background music track by mood."""
         music_dir = config.assets_dir / "music"
-
-        # Try mood-specific folder
         mood_dir = music_dir / mood
         if mood_dir.is_dir():
-            tracks = list(mood_dir.glob("*.mp3")) + \
-                     list(mood_dir.glob("*.wav"))
+            tracks = list(mood_dir.glob("*.mp3")) + list(mood_dir.glob("*.wav"))
             if tracks:
-                import random
-                selected = random.choice(tracks)
-                logger.debug(f"Music selected: {selected.name}")
-                return str(selected)
-
-        # Try any music file
-        all_tracks = list(music_dir.rglob("*.mp3")) + \
-                     list(music_dir.rglob("*.wav"))
+                return str(random.choice(tracks))
+        all_tracks = list(music_dir.rglob("*.mp3")) + list(music_dir.rglob("*.wav"))
         if all_tracks:
-            import random
-            selected = random.choice(all_tracks)
-            return str(selected)
-
-        logger.info("No music tracks found")
+            return str(random.choice(all_tracks))
         return None
 
-    def _select_gameplay(
-        self, layout: str
-    ) -> Optional[str]:
-        """Select a gameplay clip if the layout requires it.
-
-        Args:
-            layout: Layout mode from GenreConfig.
-
-        Returns:
-            Path to gameplay clip, or None.
-        """
+    def _select_gameplay(self, layout: str) -> Optional[str]:
+        """Select gameplay clip if layout requires it."""
         if layout not in ("split_screen", "full_gameplay"):
             return None
-
-        gameplay_dir = config.assets_dir / "gameplay"
-        if not gameplay_dir.is_dir():
+        gp_dir = config.assets_dir / "gameplay"
+        if not gp_dir.is_dir():
             return None
-
-        clips = list(gameplay_dir.glob("*.mp4"))
-        if clips:
-            import random
-            selected = random.choice(clips)
-            logger.debug(f"Gameplay selected: {selected.name}")
-            return str(selected)
-
-        return None
+        clips = list(gp_dir.glob("*.mp4"))
+        return str(random.choice(clips)) if clips else None
 
 
-def _create_fallback_image(
-    save_dir: Path, filename: str, mood: str
+def _create_genre_fallback(
+    save_dir: Path, filename: str, genre_id: str, mood: str,
 ) -> str:
-    """Create a solid-color fallback image with genre-appropriate tint.
+    """Create a genre-tinted fallback image per Tier 7.
 
-    Args:
-        save_dir: Directory to save the image.
-        filename: Target filename.
-        mood: Mood hint for color selection.
-
-    Returns:
-        Path to the created fallback image.
+    Uses pre-cached genre colors + gradient effect.
     """
-    # Mood → color mapping
-    colors = {
-        "eerie": (20, 10, 30),
-        "dark": (15, 15, 25),
-        "horror": (30, 5, 5),
-        "dramatic": (10, 10, 35),
-        "ominous": (25, 10, 20),
-        "unsettling": (20, 15, 25),
+    base_color = _GENRE_COLORS.get(genre_id, (30, 30, 40))
+    mood_tints = {
+        "eerie": (-5, -10, 10), "dark": (-10, -10, 5),
+        "horror": (15, -10, -10), "dramatic": (-5, -5, 15),
     }
-    color = colors.get(mood, (30, 30, 40))
+    tint = mood_tints.get(mood, (0, 0, 0))
+    color = tuple(max(0, min(255, b + t)) for b, t in zip(base_color, tint))
 
     try:
-        from PIL import Image
+        from PIL import Image, ImageDraw
         img = Image.new("RGB", (1080, 1920), color)
+        draw = ImageDraw.Draw(img)
+        # Add subtle gradient overlay
+        for y in range(1920):
+            alpha = int(y / 1920 * 40)
+            draw.line([(0, y), (1080, y)], fill=(
+                min(255, color[0] + alpha),
+                min(255, color[1] + alpha),
+                min(255, color[2] + alpha),
+            ))
         path = save_dir / filename
         img.save(str(path), "JPEG", quality=85)
         return str(path)
     except ImportError:
-        # Pillow not available — write a minimal file
         path = save_dir / filename
-        path.write_bytes(b"\xff\xd8\xff\xe0")  # JPEG header stub
+        path.write_bytes(b"\xff\xd8\xff\xe0")
         return str(path)

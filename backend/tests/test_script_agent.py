@@ -129,6 +129,12 @@ async def cache(tmp_path):
         [{"full script / transcript": "You wake up at 3 AM...",
           "score: overall": "8"}],
     )
+    # Mock get_recent_scripts to return [] — these tests
+    # exercise generation + validation, not dedup.
+    # Dedup is tested separately in test_script_dedup.
+    async def _empty_recent(*args, **kwargs):
+        return []
+    mgr.get_recent_scripts = _empty_recent
     yield mgr
     await mgr.close()
 

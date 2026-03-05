@@ -29,6 +29,7 @@ from backend.agents.prompts import (
     BANNED_PHRASES,
     WORD_TARGETS,
 )
+from backend.agents.script_dedup import check_dedup
 from backend.core.cache_manager import CacheManager
 from backend.core.config import config
 from backend.core.exceptions import (
@@ -155,6 +156,22 @@ class ScriptAgent:
                         }},
                     )
                     last_error = retry_feedback
+                    continue
+
+                # Layer 5: Deduplication (TF-IDF cosine <70%)
+                prev_scripts = await self._cache.get_recent_scripts(
+                    genre_id, limit=50
+                )
+                dedup_issue = check_dedup(
+                    script_output.narration, prev_scripts,
+                )
+                if dedup_issue:
+                    retry_feedback = dedup_issue
+                    logger.warning(
+                        f"Dedup failed: {dedup_issue}",
+                        extra={"extra_data": {"attempt": attempt}},
+                    )
+                    last_error = dedup_issue
                     continue
 
                 logger.info(

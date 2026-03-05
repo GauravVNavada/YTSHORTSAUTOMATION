@@ -10,7 +10,7 @@ from unittest.mock import patch, AsyncMock
 
 from backend.agents.asset_agent import (
     AssetAgent,
-    _create_fallback_image,
+    _create_genre_fallback,
 )
 from backend.core.models import (
     AssetBundle,
@@ -34,8 +34,9 @@ def test_image_result_score_high_res():
         width=1920,
         height=1080,
         description="A scary dark room",
+        query="scary dark room",
     )
-    assert result.score >= 40
+    assert result.score_for("scary dark room") >= 40
 
 
 def test_image_result_score_low_res():
@@ -45,8 +46,9 @@ def test_image_result_score_low_res():
         source="pixabay",
         width=400,
         height=300,
+        query="test",
     )
-    assert result.score < 25
+    assert result.score_for("test") < 40
 
 
 # ─── URL Extension Tests ──────────────────────────────
@@ -76,14 +78,14 @@ def test_extension_no_ext():
 
 def test_create_fallback_image(tmp_path):
     """Should create a fallback image file."""
-    path = _create_fallback_image(tmp_path, "test.jpg", "eerie")
+    path = _create_genre_fallback(tmp_path, "test.jpg", "scary_stories", "eerie")
     assert Path(path).exists()
     assert Path(path).stat().st_size > 0
 
 
 def test_fallback_image_unknown_mood(tmp_path):
     """Unknown mood should use default dark color."""
-    path = _create_fallback_image(tmp_path, "test.jpg", "happy")
+    path = _create_genre_fallback(tmp_path, "test.jpg", "unknown", "happy")
     assert Path(path).exists()
 
 
@@ -129,11 +131,15 @@ async def test_generate_returns_asset_bundle(
     (tmp_path / "assets" / "sfx").mkdir(parents=True)
     (tmp_path / "assets" / "music").mkdir(parents=True)
 
-    # Mock image searches to return empty (fall to Tier 7)
+    # Mock all image searches to return empty (fall to Tier 7)
     with patch("backend.agents.asset_agent.search_pexels",
+               new_callable=AsyncMock, return_value=[]), \
+         patch("backend.agents.asset_agent.search_pixabay",
+               new_callable=AsyncMock, return_value=[]), \
+         patch("backend.agents.asset_agent.search_duckduckgo",
+               new_callable=AsyncMock, return_value=[]), \
+         patch("backend.agents.asset_agent.search_wikimedia",
                new_callable=AsyncMock, return_value=[]):
-        with patch("backend.agents.asset_agent.search_pixabay",
-                   new_callable=AsyncMock, return_value=[]):
             agent = AssetAgent()
             images, sfx = sample_cues
             result = await agent.generate(
