@@ -30,11 +30,29 @@ from backend.core.models import (
 )
 from backend.core.cache_manager import CacheManager
 from backend.core.sheets_client import ReferenceReader
+from backend.core.models import PipelineStage
+import json
+
+# Import Agents
+from backend.agents.script_agent import ScriptAgent
+from backend.agents.asset_agent import AssetAgent
+from backend.agents.audio_agent import AudioAgent
+from backend.agents.visual_agent import VisualAgent
+from backend.agents.upload_agent import UploadAgent
+
+# Import Services
+from backend.services.gemini_service import GeminiService
+from backend.services.groq_service import GroqService
+from backend.services.tts_service import TTSService
+from backend.services.youtube_service import YouTubeService
 
 logger = get_logger(__name__)
 
 # Module-level cache manager — initialized in lifespan
 _cache: CacheManager | None = None
+
+# Active SSE connections mapping job_id -> Queue
+client_queues: dict[str, asyncio.Queue] = {}
 
 
 @asynccontextmanager
@@ -193,18 +211,62 @@ async def generate_video(request: GenerateRequest):
     """Start video generation pipeline."""
     job_id = str(uuid.uuid4())
     
+    # Initialize queue for this job
+    client_queues[job_id] = asyncio.Queue()
+
     # Run orchestration in background
     async def run_pipeline():
         try:
+            # Wire services (DI pattern)
             gemini = GeminiService()
-            yt = YouTubeClient()
-            orchestrator = Orchestrator(gemini, yt)
-            # Basic dummy config matching the cli
-            from backend.core.config import config
-            # Will trigger state changes that progress.js tracks
-            await orchestrator.generate(request.genre_id, request.mode, request.custom_topic)
+            groq = GroqService()
+            tts = TTSService()
+            yt = YouTubeService()
+
+            # Create agents
+            script_agent = ScriptAgent(gemini_service=gemini, groq_service=groq, cache=_cache)
+            asset_agent = AssetAgent()
+            audio_agent = AudioAgent(tts_service=tts)
+            visual_agent = VisualAgent()
+            upload_agent = UploadAgent(youtube_service=yt)
+
+            orchestrator = Orchestrator(
+                script_agent=script_agent,
+                asset_agent=asset_agent,
+                audio_agent=audio_agent,
+                visual_agent=visual_agent,
+                upload_agent=upload_agent,
+                cache=_cache,
+            )
+
+            async def progress_cb(stage: PipelineStage, pct: float, msg: str):
+                logger.info(f"Pipeline progress: {stage.value} {pct*100:.0f}% - {msg}")
+                if job_id in client_queues:
+                    data = json.dumps({"stage": stage.value, "pct": pct, "message": msg})
+                    await client_queues[job_id].put({"event": "message", "data": data})
+
+            # Run the actual pipeline
+            # Note: We pass the generated job_id implicitly down if we could, 
+            # or rely on Orchestrator generating one. For SSE, the UI tracks the job_id
+            # we return here, so Orchestrator will actually return a *different* job_id internally.
+            # However, orchestrator doesn't accept job_id as an arg right now, it generates it. 
+            # To fix this, we will track this UI `job_id` but the progress logs will reflect it.
+            
+            await orchestrator.generate(
+                genre_id=request.genre_id, 
+                mode=request.mode, 
+                custom_topic=request.custom_topic,
+                on_progress=progress_cb
+            )
         except Exception as e:
             logger.error(f"Background pipeline failed: {e}")
+            if job_id in client_queues:
+                err_data = json.dumps({"stage": "error", "pct": 1.0, "message": f"Error: {str(e)}"})
+                await client_queues[job_id].put({"event": "message", "data": err_data})
+        finally:
+            # Cleanup after 5 seconds to let UI receive 100% completion
+            await asyncio.sleep(5)
+            client_queues.pop(job_id, None)
 
     asyncio.create_task(run_pipeline())
     
@@ -221,20 +283,25 @@ async def generate_video(request: GenerateRequest):
 async def events(job_id: str):
     """SSE stream for pipeline progress."""
     async def event_generator():
-        yield {
-            "event": "message",
-            "data": '{"stage": "script", "pct": 0.1, "message": "Simulated start..."}'
-        }
-        await asyncio.sleep(1)
-        yield {
-            "event": "message",
-            "data": '{"stage": "script", "pct": 0.25, "message": "Simulated script generation..."}'
-        }
-        await asyncio.sleep(1)
-        yield {
-            "event": "message",
-            "data": '{"stage": "complete", "pct": 1.0, "message": "Simulated complete!"}'
-        }
+        # Fallback if queue never created
+        if job_id not in client_queues:
+            yield {"event": "message", "data": '{"stage": "error", "pct": 1.0, "message": "Job not found"}'}
+            return
+            
+        queue = client_queues[job_id]
+        try:
+            while True:
+                msg = await queue.get()
+                yield msg
+                # Extract pct to know when to stop
+                try:
+                    data = json.loads(msg["data"])
+                    if data.get("pct", 0) >= 1.0:
+                        break
+                except Exception:
+                    pass
+        except asyncio.CancelledError:
+            logger.info(f"SSE client disconnected for job {job_id}")
 
     return EventSourceResponse(event_generator())
 
