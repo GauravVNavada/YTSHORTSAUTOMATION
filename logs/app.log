@@ -36,3 +36,33 @@
 {"timestamp": "2026-03-01T17:06:32.048002+00:00", "level": "INFO", "module": "cache_manager", "message": "Reference scripts stored for 'genre_5'", "extra": {"count": 0}}
 {"timestamp": "2026-03-01T17:06:32.049105+00:00", "level": "INFO", "module": "main", "message": "Cache refresh complete"}
 {"timestamp": "2026-03-01T17:07:44.779533+00:00", "level": "INFO", "module": "main", "message": "Backend shutting down"}
+{"timestamp": "2026-03-05T16:36:25.522243+00:00", "level": "INFO", "module": "main", "message": "Backend starting", "extra": {"port": 8742, "debug": false}}
+{"timestamp": "2026-03-05T16:36:25.548666+00:00", "level": "INFO", "module": "cache_manager", "message": "Cache database initialized", "extra": {"path": "C:\\Users\\vgaur\\Desktop\\YTSHORTSAUTOMATION\\data\\sheets_cache.db"}}
+{"timestamp": "2026-03-05T16:36:25.550177+00:00", "level": "INFO", "module": "main", "message": "Cache is stale or empty, refreshing from Google Sheets..."}
+{"timestamp": "2026-03-05T16:36:27.828193+00:00", "level": "INFO", "module": "sheets_client", "message": "Genres loaded from sheet", "extra": {"count": 15}}
+{"timestamp": "2026-03-05T16:36:27.841813+00:00", "level": "INFO", "module": "cache_manager", "message": "Genres stored in cache", "extra": {"count": 15}}
+{"timestamp": "2026-03-05T16:36:28.294139+00:00", "level": "WARNING", "module": "main", "message": "genre_config tab not found, skipping"}
+{"timestamp": "2026-03-05T16:36:29.309449+00:00", "level": "INFO", "module": "sheets_client", "message": "Reference scripts loaded from 'Genre 1'", "extra": {"count": 0}}
+{"timestamp": "2026-03-05T16:36:29.313090+00:00", "level": "INFO", "module": "cache_manager", "message": "Reference scripts stored for 'genre_1'", "extra": {"count": 0}}
+{"timestamp": "2026-03-05T16:36:29.761447+00:00", "level": "INFO", "module": "sheets_client", "message": "Reference scripts loaded from 'Genre 2'", "extra": {"count": 0}}
+{"timestamp": "2026-03-05T16:36:29.764517+00:00", "level": "INFO", "module": "cache_manager", "message": "Reference scripts stored for 'genre_2'", "extra": {"count": 0}}
+{"timestamp": "2026-03-05T16:36:30.209152+00:00", "level": "INFO", "module": "sheets_client", "message": "Reference scripts loaded from 'Genre 3'", "extra": {"count": 0}}
+{"timestamp": "2026-03-05T16:36:30.212036+00:00", "level": "INFO", "module": "cache_manager", "message": "Reference scripts stored for 'genre_3'", "extra": {"count": 0}}
+{"timestamp": "2026-03-05T16:36:30.648980+00:00", "level": "INFO", "module": "sheets_client", "message": "Reference scripts loaded from 'Genre 4'", "extra": {"count": 0}}
+{"timestamp": "2026-03-05T16:36:30.650491+00:00", "level": "INFO", "module": "cache_manager", "message": "Reference scripts stored for 'genre_4'", "extra": {"count": 0}}
+{"timestamp": "2026-03-05T16:36:31.061479+00:00", "level": "INFO", "module": "sheets_client", "message": "Reference scripts loaded from 'Genre 5'", "extra": {"count": 0}}
+{"timestamp": "2026-03-05T16:36:31.063551+00:00", "level": "INFO", "module": "cache_manager", "message": "Reference scripts stored for 'genre_5'", "extra": {"count": 0}}
+{"timestamp": "2026-03-05T16:36:31.064622+00:00", "level": "INFO", "module": "main", "message": "Cache refresh complete"}
+{"timestamp": "2026-03-05T16:41:12.382834+00:00", "level": "INFO", "module": "main", "message": "Backend starting", "extra": {"port": 8742, "debug": false}}
+{"timestamp": "2026-03-05T16:41:12.405574+00:00", "level": "INFO", "module": "cache_manager", "message": "Cache database initialized", "extra": {"path": "C:\\Users\\vgaur\\Desktop\\YTSHORTSAUTOMATION\\data\\sheets_cache.db"}}
+{"timestamp": "2026-03-05T16:41:12.410751+00:00", "level": "INFO", "module": "main", "message": "Cache is fresh (0.1h old), skipping refresh"}
+{"timestamp": "2026-03-05T16:41:12.414187+00:00", "level": "INFO", "module": "main", "message": "Backend shutting down"}
+{"timestamp": "2026-03-05T16:48:10.544793+00:00", "level": "INFO", "module": "main", "message": "Backend starting", "extra": {"port": 8742, "debug": false}}
+{"timestamp": "2026-03-05T16:48:10.555868+00:00", "level": "INFO", "module": "cache_manager", "message": "Cache database initialized", "extra": {"path": "C:\\Users\\vgaur\\Desktop\\YTSHORTSAUTOMATION\\data\\sheets_cache.db"}}
+{"timestamp": "2026-03-05T16:48:10.560059+00:00", "level": "INFO", "module": "main", "message": "Cache is fresh (0.2h old), skipping refresh"}
+{"timestamp": "2026-03-05T16:48:10.562818+00:00", "level": "INFO", "module": "main", "message": "Backend shutting down"}
+{"timestamp": "2026-03-05T16:48:22.436430+00:00", "level": "INFO", "module": "main", "message": "Backend starting", "extra": {"port": 8742, "debug": false}}
+{"timestamp": "2026-03-05T16:48:22.439592+00:00", "level": "INFO", "module": "cache_manager", "message": "Cache database initialized", "extra": {"path": "C:\\Users\\vgaur\\Desktop\\YTSHORTSAUTOMATION\\data\\sheets_cache.db"}}
+{"timestamp": "2026-03-05T16:48:22.441621+00:00", "level": "INFO", "module": "main", "message": "Cache is fresh (0.2h old), skipping refresh"}
+{"timestamp": "2026-03-05T16:50:14.880704+00:00", "level": "ERROR", "module": "main", "message": "Background pipeline failed: name 'YouTubeClient' is not defined"}
+{"timestamp": "2026-03-05T16:51:27.314632+00:00", "level": "ERROR", "module": "main", "message": "Background pipeline failed: name 'YouTubeClient' is not defined"}

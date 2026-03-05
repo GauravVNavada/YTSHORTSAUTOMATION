@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YT Shorts Auto — AI Video Generator</title>
+  <meta name="description" content="Generate professional YouTube Shorts with AI — script, voice, images, captions, music, all automated." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles/main.css" />
+</head>
+<body>
+  <div id="app">
+    <nav id="sidebar">
+      <div class="sidebar-brand">
+        <span class="brand-icon">🎬</span>
+        <span class="brand-text">YT Shorts<span class="brand-accent">Auto</span></span>
+      </div>
+      <div class="nav-links">
+        <a href="#/" class="nav-link active" data-page="dashboard">
+          <span class="nav-icon">📊</span> Dashboard
+        </a>
+        <a href="#/generate" class="nav-link" data-page="generate">
+          <span class="nav-icon">✨</span> Generate
+        </a>
+        <a href="#/settings" class="nav-link" data-page="settings">
+          <span class="nav-icon">⚙️</span> Settings
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <div class="version-badge">v0.1.0-alpha</div>
+      </div>
+    </nav>
+    <main id="page-content">
+      <!-- Pages rendered here by router -->
+    </main>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
