@@ -69,7 +69,8 @@ class GeminiService:
                 config={
                     "system_instruction": system_prompt,
                     "temperature": 0.9,
-                    "max_output_tokens": 1024,
+                    "max_output_tokens": 4096,
+                    "response_mime_type": "application/json",
                 },
             )
             text = response.text or ""

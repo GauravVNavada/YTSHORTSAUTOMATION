@@ -19,6 +19,7 @@ from backend.core.models import (
     PipelineStage,
     PipelineState,
     GenreMode,
+    GenreConfig,
 )
 
 logger = get_logger(__name__)
@@ -198,6 +199,8 @@ class Orchestrator:
 
         t0 = time.monotonic()
         genre_config = await self._cache.get_genre_config(state.genre_id)
+        if genre_config is None:
+            genre_config = GenreConfig(genre_id=state.genre_id)
         script_output = await self._script.generate(
             state.genre_id,
             mode=state.mode.value,
@@ -222,6 +225,8 @@ class Orchestrator:
         t0 = time.monotonic()
         script = state.script_output
         genre_config = await self._cache.get_genre_config(state.genre_id)
+        if genre_config is None:
+            genre_config = GenreConfig(genre_id=state.genre_id)
 
         # Run asset + audio in parallel
         asset_task = self._asset.generate(
@@ -231,6 +236,7 @@ class Orchestrator:
         audio_task = self._audio.generate(
             narration=script.narration,
             genre_config=genre_config,
+            job_id=state.job_id,
         )
 
         asset_bundle, audio_bundle = await asyncio.gather(
@@ -258,6 +264,8 @@ class Orchestrator:
 
         t0 = time.monotonic()
         genre_config = await self._cache.get_genre_config(state.genre_id)
+        if genre_config is None:
+            genre_config = GenreConfig(genre_id=state.genre_id)
         script = state.script_output
 
         video_result = await self._visual.generate(

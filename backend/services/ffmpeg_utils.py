@@ -127,12 +127,12 @@ def _build_full_image_cmd(
             )
             prev = out_label
 
-        cap_path = caption_path.replace("\\", "/").replace(":", "\\\\:")
+        cap_path = caption_path.replace("\\", "/").replace(":", "\\:")
         parts.append(f"[vbase]ass='{cap_path}'[vout]")
         cmd.extend(["-filter_complex", ";".join(parts)])
         cmd.extend(["-map", "[vout]", "-map", f"{n}:a"])
     else:
-        cap_path = caption_path.replace("\\", "/").replace(":", "\\\\:")
+        cap_path = caption_path.replace("\\", "/").replace(":", "\\:")
         cmd.extend([
             "-vf",
             f"scale=1080:1920,zoompan=z='min(zoom+0.0008,1.15)'"
@@ -176,7 +176,7 @@ def _build_split_cmd(
     else:
         parts.append(f"[top0][bottom]vstack[vbase]")
 
-    cap_path = caption_path.replace("\\", "/").replace(":", "\\\\:")
+    cap_path = caption_path.replace("\\", "/").replace(":", "\\:")
     parts.append(f"[vbase]ass='{cap_path}'[vout]")
     cmd.extend(["-filter_complex", ";".join(parts)])
     cmd.extend(["-map", "[vout]", "-map", f"{n + 1}:a"])
@@ -192,7 +192,7 @@ def _build_gameplay_cmd(
 ) -> list[str]:
     """Full Gameplay: gameplay 100% + captions overlay."""
     duration_s = duration_ms / 1000.0
-    cap_path = caption_path.replace("\\", "/").replace(":", "\\\\:")
+    cap_path = caption_path.replace("\\", "/").replace(":", "\\:")
     cmd = [ffmpeg, "-y", "-i", gameplay_path, "-i", audio_path]
     cmd.extend([
         "-vf", f"scale=1080:1920,ass='{cap_path}'",

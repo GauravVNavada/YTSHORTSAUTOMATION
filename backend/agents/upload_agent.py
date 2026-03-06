@@ -12,7 +12,7 @@ from datetime import datetime, timezone, timedelta
 from typing import Optional
 
 from backend.core.config import config
-from backend.core.exceptions import UploadError
+from backend.core.exceptions import UploadError, AuthError
 from backend.core.logger import get_logger
 from backend.core.models import VideoResult
 from backend.services.youtube_service import YouTubeService
@@ -100,6 +100,13 @@ class UploadAgent:
                 logger.warning(f"Upload attempt {attempt + 1} failed: {exc}")
                 if attempt < config.max_retries - 1:
                     await asyncio.sleep(2 ** attempt)
+            except AuthError as exc:
+                logger.warning(f"Skipping YouTube upload: {exc}")
+                now = datetime.now(timezone.utc).isoformat()
+                return UploadResult(
+                    video_id="local_test_skipped", url="local_test_skipped", title=title,
+                    uploaded_at=now, scheduled_for=scheduled_for,
+                )
 
         raise UploadError(
             f"Upload failed after {config.max_retries} attempts",

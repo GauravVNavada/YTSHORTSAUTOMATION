@@ -120,9 +120,6 @@ class TTSService:
                 input=synthesis_input,
                 voice=voice,
                 audio_config=audio_config,
-                enable_time_pointing=[
-                    texttospeech.SynthesizeSpeechRequest.TimepointType.SSML_MARK
-                ],
             )
         except Exception as exc:
             raise TTSError(
@@ -130,8 +127,9 @@ class TTSService:
                 details=str(exc),
             )
 
-        # Parse timepoints into WordTimestamp models
-        timestamps = _parse_timepoints(response.timepoints)
+        # Generate estimated word timestamps from audio duration
+        # (enable_time_pointing was removed in google-cloud-texttospeech v2.24)
+        timestamps = _estimate_timestamps(ssml, response.audio_content)
 
         logger.info(
             "TTS synthesis complete",
@@ -144,28 +142,48 @@ class TTSService:
         return response.audio_content, timestamps
 
 
-def _parse_timepoints(timepoints) -> list[WordTimestamp]:
-    """Convert Google TTS timepoints to WordTimestamp models.
+def _estimate_timestamps(ssml: str, audio_bytes: bytes) -> list[WordTimestamp]:
+    """Estimate word timestamps by distributing words evenly across audio duration.
 
     Args:
-        timepoints: List of Timepoint objects from TTS response.
+        ssml: The SSML text that was synthesized.
+        audio_bytes: The resulting audio bytes (WAV format).
 
     Returns:
-        List of WordTimestamp models with start/end ms.
+        List of estimated WordTimestamp models.
     """
+    import re
+    import io
+    import wave
+
+    # Strip SSML tags to get plain text
+    plain_text = re.sub(r"<[^>]+>", " ", ssml)
+    words = plain_text.split()
+    words = [w for w in words if w.strip()]
+
+    if not words:
+        return []
+
+    # Calculate audio duration from WAV bytes
+    try:
+        buf = io.BytesIO(audio_bytes)
+        with wave.open(buf, "rb") as w:
+            frames = w.getnframes()
+            rate = w.getframerate()
+            duration_ms = int((frames / rate) * 1000)
+    except Exception:
+        # Estimate from byte size if WAV parsing fails  
+        duration_ms = max(int(len(audio_bytes) / 48.0), 1000)
+
+    # Distribute words evenly across the duration
+    word_duration_ms = duration_ms // len(words) if words else 300
     stamps = []
-    for i, tp in enumerate(timepoints):
-        start_ms = int(tp.time_offset.total_seconds() * 1000)
-        # Estimate end_ms from next timepoint, or add 300ms
-        if i + 1 < len(timepoints):
-            end_ms = int(
-                timepoints[i + 1].time_offset.total_seconds() * 1000
-            )
-        else:
-            end_ms = start_ms + 300
+    for i, word in enumerate(words):
+        start_ms = i * word_duration_ms
+        end_ms = start_ms + word_duration_ms
         stamps.append(WordTimestamp(
-            word=tp.mark_name,
+            word=word,
             start_ms=start_ms,
-            end_ms=end_ms,
+            end_ms=min(end_ms, duration_ms),
         ))
     return stamps

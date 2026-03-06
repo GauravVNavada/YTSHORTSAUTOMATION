@@ -178,7 +178,7 @@ class VisualAgent:
         logger.info(
             "FFmpeg render starting",
             extra={"extra_data": {
-                "cmd_preview": " ".join(cmd[:8]),
+                "cmd_full": " ".join(cmd),
             }},
         )
         try:
@@ -191,10 +191,14 @@ class VisualAgent:
                 proc.communicate(), timeout=FFMPEG_TIMEOUT
             )
             if proc.returncode != 0:
-                err_text = stderr.decode()[-500:]
+                err_text = stderr.decode(errors="replace")
+                logger.error(
+                    f"FFmpeg failed (code {proc.returncode})",
+                    extra={"extra_data": {"stderr": err_text[-2000:]}},
+                )
                 raise RenderError(
                     f"FFmpeg exited with code {proc.returncode}",
-                    details=err_text,
+                    details=err_text[-2000:],
                 )
         except asyncio.TimeoutError:
             proc.kill()

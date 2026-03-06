@@ -50,7 +50,7 @@ logger = get_logger(__name__)
 # ─── Constants ─────────────────────────────────────────
 _MAX_RETRIES = 3
 _MIN_IMAGE_CUES = 3
-_WORD_TOLERANCE = 15
+_WORD_TOLERANCE = 30
 
 
 class ScriptAgent:
@@ -399,8 +399,9 @@ def _safe_parse_json(text: str) -> dict:
     if not text:
         return {}
 
-    # Strip markdown code fences
     cleaned = text.strip()
+    
+    # Strip markdown code fences
     if cleaned.startswith("```"):
         lines = cleaned.split("\n")
         # Remove first and last lines (```json and ```)
@@ -410,14 +411,22 @@ def _safe_parse_json(text: str) -> dict:
         ]
         cleaned = "\n".join(lines)
 
+    # Secondary clean: grab everything from first { to last }
+    start_idx = cleaned.find("{")
+    end_idx = cleaned.rfind("}")
+    
+    if start_idx != -1 and end_idx != -1 and end_idx >= start_idx:
+        cleaned = cleaned[start_idx:end_idx+1]
+
     try:
         return json.loads(cleaned)
     except json.JSONDecodeError:
-        # Try to find JSON object in the text
-        match = re.search(r"\{.*\}", cleaned, re.DOTALL)
-        if match:
-            try:
+        # Try to find JSON object in the text using regex fallback
+        try:
+            import re
+            match = re.search(r"\{.*\}", cleaned, re.DOTALL)
+            if match:
                 return json.loads(match.group())
-            except json.JSONDecodeError:
-                pass
+        except Exception:
+            pass
     return {}

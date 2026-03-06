@@ -218,8 +218,8 @@ async def generate_video(request: GenerateRequest):
     async def run_pipeline():
         try:
             # Wire services (DI pattern)
-            gemini = GeminiService()
-            groq = GroqService()
+            gemini = GeminiService(api_key=config.gemini_api_key)
+            groq = GroqService(api_key=config.groq_api_key)
             tts = TTSService()
             yt = YouTubeService()
 
@@ -259,9 +259,13 @@ async def generate_video(request: GenerateRequest):
                 on_progress=progress_cb
             )
         except Exception as e:
-            logger.error(f"Background pipeline failed: {e}")
+            details = getattr(e, "details", "")
+            logger.error(f"Background pipeline failed: {e}\nDetails: {details}")
             if job_id in client_queues:
-                err_data = json.dumps({"stage": "error", "pct": 1.0, "message": f"Error: {str(e)}"})
+                err_message = f"Error: {str(e)}"
+                if details:
+                    err_message += f"\n[RAW LLM DUMP]: {details[:1500]}"
+                err_data = json.dumps({"stage": "error", "pct": 1.0, "message": err_message})
                 await client_queues[job_id].put({"event": "message", "data": err_data})
         finally:
             # Cleanup after 5 seconds to let UI receive 100% completion

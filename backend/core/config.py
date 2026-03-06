@@ -99,6 +99,8 @@ class AppConfig(BaseModel):
     # ─── User API Keys (BYOK) ─────────────────────
     pexels_key: str = os.environ.get("PEXELS_API_KEY", "")
     pixabay_key: str = os.environ.get("PIXABAY_API_KEY", "")
+    gemini_api_key: str = os.environ.get("GEMINI_API_KEY", "")
+    groq_api_key: str = os.environ.get("GROQ_API_KEY", "")
 
     # ─── Video Defaults ────────────────────────────
     video_width: int = 1080
