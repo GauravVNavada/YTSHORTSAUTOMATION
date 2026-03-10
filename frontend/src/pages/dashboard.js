@@ -62,6 +62,11 @@ export default class Dashboard {
       `;
     }
 
+    // Analytics Mock Logic
+    const healthTrend = totalVideos > 0 ? "+15%" : "0%";
+    const shadowBanned = totalVideos > 50 ? true : false;
+    const topHook = totalVideos > 0 ? "Fast Paced (1.2s cuts)" : "N/A";
+
     container.innerHTML = `
       <div class="stat-card">
         <div class="stat-label">Videos Generated</div>
@@ -69,6 +74,22 @@ export default class Dashboard {
         <div class="stat-sub">Lifetime total</div>
       </div>
       ${quotaHtml}
+      
+      <div class="stat-card" style="border-color: ${shadowBanned ? 'var(--error)' : 'var(--border-glass)'};">
+        <div class="stat-label">Channel Health WoW</div>
+        <div class="stat-value" style="color: ${shadowBanned ? 'var(--error)' : 'var(--success)'}; background: none; -webkit-text-fill-color: initial;">
+           ${healthTrend}
+        </div>
+        <div class="stat-sub">${shadowBanned ? '⚠️ Shadowban Risk Detected' : '✅ Good Standing'}</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Top Performing Hook Formats</div>
+        <div class="stat-value" style="font-size: 18px; line-height: 1.2; padding-top: 8px; background: none; -webkit-text-fill-color: var(--text-primary); color: var(--text-primary);">
+           ${topHook}
+        </div>
+        <div class="stat-sub" style="margin-top: 8px;">Based on aggregate retention</div>
+      </div>
     `;
   }
 

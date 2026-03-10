@@ -3,9 +3,12 @@
  * Base URL is /api (proxied in dev, relative in prod)
  */
 
+export const isTauri = typeof window !== 'undefined' && !!window.__TAURI_INTERNALS__;
+export const API_BASE = isTauri ? 'http://localhost:8742/api' : '/api';
+
 export const api = {
     async get(endpoint) {
-        const res = await fetch(`/api${endpoint}`);
+        const res = await fetch(`${API_BASE}${endpoint}`);
         if (!res.ok) {
             const error = await res.json().catch(() => ({}));
             throw new Error(error.detail || `API Error: ${res.status}`);
@@ -14,7 +17,7 @@ export const api = {
     },
 
     async post(endpoint, data = {}) {
-        const res = await fetch(`/api${endpoint}`, {
+        const res = await fetch(`${API_BASE}${endpoint}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),

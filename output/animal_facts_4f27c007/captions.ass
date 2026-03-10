@@ -1,0 +1,30 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Montserrat,64,&H00FFFFFF,&H000000FF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,3,0,2,60,60,250,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:02.87,Default,,60,60,0,,Imagine an animal\Nthat can shatter an
+Dialogue: 0,0:00:02.87,0:00:05.74,Default,,60,60,0,,aquarium with a\Nsingle punch. Meet the
+Dialogue: 0,0:00:05.74,0:00:08.61,Default,,60,60,0,,Mantis Shrimp, a small\Nbut terrifying crustacean
+Dialogue: 0,0:00:08.61,0:00:11.48,Default,,60,60,0,,from the ocean's\Ntropical reefs. Its club-like
+Dialogue: 0,0:00:11.48,0:00:14.35,Default,,60,60,0,,appendages accelerate\Nfaster than a .22 caliber
+Dialogue: 0,0:00:14.35,0:00:17.22,Default,,60,60,0,,bullet, reaching\N50 miles per hour in
+Dialogue: 0,0:00:17.22,0:00:20.09,Default,,60,60,0,,just 3 milliseconds.\NThis isn't just a
+Dialogue: 0,0:00:20.09,0:00:22.96,Default,,60,60,0,,hit; it creates a\Nsuperheated cavitation bubble
+Dialogue: 0,0:00:22.96,0:00:25.83,Default,,60,60,0,,that instantly vaporizes water,\Ngenerating immense shockwaves.
+Dialogue: 0,0:00:25.83,0:00:28.70,Default,,60,60,0,,It's so powerful\Nit can boil water
+Dialogue: 0,0:00:28.70,0:00:31.57,Default,,60,60,0,,and generate light,\Npulverizing crab shells and
+Dialogue: 0,0:00:31.57,0:00:34.44,Default,,60,60,0,,even small fish. But\Nits arsenal doesn't
+Dialogue: 0,0:00:34.44,0:00:37.31,Default,,60,60,0,,stop there. Mantis\Nshrimp also possess the
+Dialogue: 0,0:00:37.31,0:00:40.18,Default,,60,60,0,,most complex eyes\Nin the entire animal
+Dialogue: 0,0:00:40.18,0:00:43.05,Default,,60,60,0,,kingdom, seeing up\Nto 16 primary colors,
+Dialogue: 0,0:00:43.05,0:00:45.92,Default,,60,60,0,,far beyond our\Nmeasly three. They can
+Dialogue: 0,0:00:45.92,0:00:48.79,Default,,60,60,0,,even detect polarized\Nlight. Is this creature
+Dialogue: 0,0:00:48.79,0:00:50.43,Default,,60,60,0,,more alien than animal?

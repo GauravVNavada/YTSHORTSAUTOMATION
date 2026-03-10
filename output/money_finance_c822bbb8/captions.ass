@@ -1,0 +1,28 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Montserrat,64,&H00FFFFFF,&H000000FF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,3,0,2,60,60,250,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:02.95,Default,,60,60,0,,The biggest financial\Nlie you’ve ever been
+Dialogue: 0,0:00:02.95,0:00:05.89,Default,,60,60,0,,sold? That saving\Nalone makes you rich.
+Dialogue: 0,0:00:05.89,0:00:08.84,Default,,60,60,0,,You’ve been meticulously\Nstashing cash for years,
+Dialogue: 0,0:00:08.84,0:00:11.79,Default,,60,60,0,,watching it slowly\Naccumulate. But here’s the
+Dialogue: 0,0:00:11.79,0:00:14.73,Default,,60,60,0,,brutal truth: that\Nmoney is silently eroding.
+Dialogue: 0,0:00:14.73,0:00:17.68,Default,,60,60,0,,Inflation, a silent\Nthief, steals its value.
+Dialogue: 0,0:00:17.68,0:00:20.63,Default,,60,60,0,,A dollar saved\Nin 2000 is worth
+Dialogue: 0,0:00:20.63,0:00:23.58,Default,,60,60,0,,40% less today. Your\Nsavings account offers
+Dialogue: 0,0:00:23.58,0:00:26.52,Default,,60,60,0,,meager 0.5% interest,\Nwhile inflation often rages
+Dialogue: 0,0:00:26.52,0:00:29.47,Default,,60,60,0,,at 3% or more.\NThis isn't building
+Dialogue: 0,0:00:29.47,0:00:32.42,Default,,60,60,0,,wealth; it’s a slow\Nfinancial bleed. You're
+Dialogue: 0,0:00:32.42,0:00:35.36,Default,,60,60,0,,losing purchasing power,\Ntrapped in diminishing returns.
+Dialogue: 0,0:00:35.36,0:00:38.31,Default,,60,60,0,,To truly build\Nfortune, you MUST make
+Dialogue: 0,0:00:38.31,0:00:41.26,Default,,60,60,0,,your money work.\NInvest it. Unleash its
+Dialogue: 0,0:00:41.26,0:00:44.20,Default,,60,60,0,,potential. Are you\Nready to stop your
+Dialogue: 0,0:00:44.20,0:00:45.47,Default,,60,60,0,,future from shrinking?

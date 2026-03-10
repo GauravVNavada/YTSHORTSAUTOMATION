@@ -1,0 +1,29 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Montserrat,64,&H00FFFFFF,&H000000FF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,3,0,2,60,60,250,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:03.15,Default,,60,60,0,,Imagine an animal\Nthat can simply... refuse
+Dialogue: 0,0:00:03.15,0:00:06.30,Default,,60,60,0,,to die. Most\Njellyfish drift through a
+Dialogue: 0,0:00:06.30,0:00:09.45,Default,,60,60,0,,short life, fading\Nafter a few months,
+Dialogue: 0,0:00:09.45,0:00:12.60,Default,,60,60,0,,their bodies dissolving\Ninto the ocean's depths.
+Dialogue: 0,0:00:12.60,0:00:15.75,Default,,60,60,0,,But a bizarre\Ncreature in the Mediterranean
+Dialogue: 0,0:00:15.75,0:00:18.90,Default,,60,60,0,,Sea laughs in the\Nface of mortality:
+Dialogue: 0,0:00:18.90,0:00:22.05,Default,,60,60,0,,the Turritopsis dohrnii,\Nthe "Immortal Jellyfish." When
+Dialogue: 0,0:00:22.05,0:00:25.20,Default,,60,60,0,,faced with old age,\Ninjury, or starvation,
+Dialogue: 0,0:00:25.20,0:00:28.35,Default,,60,60,0,,this tiny marvel\Ndoesn't perish. Instead, it
+Dialogue: 0,0:00:28.35,0:00:31.50,Default,,60,60,0,,radically transforms. It\Nreverts its adult cells
+Dialogue: 0,0:00:31.50,0:00:34.65,Default,,60,60,0,,back into their juvenile\Npolyp stage, effectively
+Dialogue: 0,0:00:34.65,0:00:37.80,Default,,60,60,0,,resetting its\Nbiological clock to zero. This
+Dialogue: 0,0:00:37.80,0:00:40.95,Default,,60,60,0,,incredible process, called\Ntransdifferentiation, allows it to
+Dialogue: 0,0:00:40.95,0:00:44.10,Default,,60,60,0,,cheat death indefinitely,\Nregenerating repeatedly. It's like
+Dialogue: 0,0:00:44.10,0:00:47.25,Default,,60,60,0,,a butterfly reverting\Nto a caterpillar, over
+Dialogue: 0,0:00:47.25,0:00:50.40,Default,,60,60,0,,and over. Forever\Nescaping the grim reaper.
+Dialogue: 0,0:00:50.40,0:00:53.10,Default,,60,60,0,,Is this the ultimate\Nbiological superpower?

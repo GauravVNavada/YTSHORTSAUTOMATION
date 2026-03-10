@@ -1,0 +1,29 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Montserrat,64,&H00FFFFFF,&H000000FF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,3,0,2,60,60,250,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:03.00,Default,,60,60,0,,Imagine seeing colors\Nyou can't even dream
+Dialogue: 0,0:00:03.00,0:00:05.99,Default,,60,60,0,,of. That's just\Na Tuesday for the
+Dialogue: 0,0:00:05.99,0:00:08.99,Default,,60,60,0,,Mantis Shrimp. These\Nvibrant ocean warriors possess
+Dialogue: 0,0:00:08.99,0:00:11.98,Default,,60,60,0,,the most complex\Neyes in the entire
+Dialogue: 0,0:00:11.98,0:00:14.98,Default,,60,60,0,,animal kingdom. Humans have\Nthree color-receptive cones;
+Dialogue: 0,0:00:14.98,0:00:17.98,Default,,60,60,0,,Mantis Shrimp? Sixteen.\NThey can perceive ultraviolet,
+Dialogue: 0,0:00:17.98,0:00:20.97,Default,,60,60,0,,infrared, and even\Ncircularly polarized light. But
+Dialogue: 0,0:00:20.97,0:00:23.97,Default,,60,60,0,,their superpowers don't\Nstop there. Their raptorial
+Dialogue: 0,0:00:23.97,0:00:26.96,Default,,60,60,0,,claws accelerate\Nfaster than a .22 caliber
+Dialogue: 0,0:00:26.96,0:00:29.96,Default,,60,60,0,,bullet. The strike\Ngenerates a superheated bubble
+Dialogue: 0,0:00:29.96,0:00:32.96,Default,,60,60,0,,that momentarily reaches\Nthousands of degrees Celsius.
+Dialogue: 0,0:00:32.96,0:00:35.95,Default,,60,60,0,,It's called a\Ncavitation bubble, and it
+Dialogue: 0,0:00:35.95,0:00:38.95,Default,,60,60,0,,can smash through\Naquarium glass. This tiny
+Dialogue: 0,0:00:38.95,0:00:41.94,Default,,60,60,0,,terror, often just\Na few inches long,
+Dialogue: 0,0:00:41.94,0:00:44.94,Default,,60,60,0,,is a living, breathing,\Ntechnicolor tank. So,
+Dialogue: 0,0:00:44.94,0:00:47.94,Default,,60,60,0,,the next time\Nyou marvel at a
+Dialogue: 0,0:00:47.94,0:00:50.93,Default,,60,60,0,,rainbow, consider what\Nspectrum you're truly missing.

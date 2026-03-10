@@ -1,3 +1,5 @@
+import { API_BASE } from '../api.js';
+
 export default class Progress {
     async getHtml() {
         return `
@@ -67,7 +69,7 @@ export default class Progress {
     }
 
     connectSSE(jobId) {
-        this.eventSource = new EventSource(`/api/events/${jobId}`);
+        this.eventSource = new EventSource(`${API_BASE}/events/${jobId}`);
 
         this.eventSource.onmessage = (event) => {
             try {
